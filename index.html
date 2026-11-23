@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>36 家客户商业画像 · 全屏铺满翻页册</title>
+<style>
+:root{
+  --navy:#1F3864; --blue:#2E5496; --ink:#26303D; --ink2:#4A5566; --gray:#8A94A6;
+  --line:#DCE3EF; --bg:#E9EDF5; --card:#F5F8FC; --red:#C00000; --orange:#C55A11;
+  --pw:1680px; --ph:945px; --padx:72px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;background:
+    radial-gradient(1200px 700px at 50% -10%,#F6F8FC 0%,#E4E9F2 45%,#D7DEEA 100%);
+  font-family:"Source Han Sans SC","Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:var(--ink);overflow:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+/* ---------------- 舞台 ---------------- */
+#stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;perspective:2600px;z-index:0}
+#book{
+  width:var(--pw);height:var(--ph);position:relative;
+  transform-origin:center center;
+  transform-style:preserve-3d;
+  filter:drop-shadow(0 26px 60px rgba(20,35,64,.28));
+}
+.page{
+  position:absolute;inset:0;background:#fff;border-radius:2px;
+  display:none;overflow:hidden;
+  transform-origin:left center;backface-visibility:hidden;
+}
+.page.on{display:block}
+.page::after{ /* 装订侧阴影 */
+  content:"";position:absolute;left:0;top:0;bottom:0;width:14px;
+  background:linear-gradient(90deg,rgba(20,35,64,.10),rgba(20,35,64,0));pointer-events:none;
+}
+.page.flip-out{display:block;z-index:40;animation:flipOut .62s cubic-bezier(.42,.02,.28,1) forwards}
+.page.flip-out::before{
+  content:"";position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:linear-gradient(90deg,rgba(20,30,50,.55),rgba(20,30,50,.05) 55%,rgba(20,30,50,0));
+  animation:shadeOut .62s forwards;
+}
+@keyframes flipOut{
+  0%{transform:rotateY(0deg)}
+  100%{transform:rotateY(-176deg)}
+}
+@keyframes shadeOut{0%{opacity:0}55%{opacity:.55}100%{opacity:.9}}
+.page.flip-in{display:block;z-index:40;animation:flipIn .62s cubic-bezier(.42,.02,.28,1) forwards}
+@keyframes flipIn{0%{transform:rotateY(-176deg)}100%{transform:rotateY(0deg)}}
+
+/* ---------------- 页眉页脚 ---------------- */
+.pg-head{
+  position:absolute;top:0;left:var(--padx);right:var(--padx);height:48px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding-bottom:7px;border-bottom:1px solid var(--line);
+  font-size:12.5px;letter-spacing:.06em;color:var(--gray);
+}
+.pg-head b{font-weight:600;color:var(--navy)}
+.pg-body{
+  position:absolute;top:48px;left:var(--padx);right:var(--padx);
+  height:851px;overflow:hidden;
+}
+.pg-foot{
+  position:absolute;bottom:0;left:var(--padx);right:var(--padx);height:46px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12.5px;color:var(--gray);letter-spacing:.04em;
+  border-top:1px solid var(--line);padding-top:8px;
+}
+.pg-foot .pn b{color:var(--navy);font-weight:700;font-size:11px}
+.ribbon{position:absolute;left:0;top:0;bottom:0;width:5px}
+
+/* ---------------- 正文排版 ---------------- */
+.pg-flow{font-size:18px;line-height:1.72;color:var(--ink);text-align:justify}
+.sec-title{
+  font-size:20px;font-weight:700;color:var(--navy);letter-spacing:.02em;
+  margin:22px 0 10px;padding-left:13px;position:relative;line-height:1.4;
+}
+.sec-title::before{
+  content:"";position:absolute;left:0;top:3px;width:4px;height:17px;border-radius:2px;
+  background:linear-gradient(180deg,var(--navy),var(--blue));
+}
+.sec-title.first{margin-top:0}
+.blk{margin:0 0 9px}
+p{margin:0 0 8px}
+ul,ol{margin:0 0 9px;padding-left:0;list-style:none}
+li{position:relative;padding-left:18px;margin:0 0 6px}
+ul>li::before{
+  content:"";position:absolute;left:2px;top:.72em;width:5px;height:5px;border-radius:50%;
+  background:var(--blue);opacity:.55;
+}
+ol{counter-reset:o}
+ol>li{counter-increment:o;padding-left:24px}
+ol>li::before{
+  content:counter(o)".";position:absolute;left:0;top:0;color:var(--blue);
+  font-weight:700;font-size:12.5px;line-height:1.9;
+}
+strong{font-weight:700;color:#15243D}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15.5px;background:#F1F4FA;padding:1px 4px;border-radius:3px}
+.mk{font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;font-style:normal}
+
+.callout{
+  background:var(--card);border-left:3px solid var(--blue);border-radius:0 4px 4px 0;
+  padding:12px 16px;margin:0 0 13px;font-size:17px;line-height:1.74;color:#33405A;
+}
+blockquote.qt{
+  margin:0 0 10px;padding:8px 14px;background:#FAFBFE;border-left:2px solid var(--line);
+  color:var(--ink2);font-size:16.5px;
+}
+table.tbl{width:100%;border-collapse:collapse;margin:0 0 12px;font-size:15px;line-height:1.6;table-layout:auto}
+table.tbl th{
+  background:var(--navy);color:#fff;font-weight:600;text-align:left;
+  padding:6px 7px;border:1px solid #172B4E;letter-spacing:.02em;
+}
+table.tbl td{padding:5px 7px;border:1px solid var(--line);vertical-align:top;word-break:break-word}
+table.tbl tbody tr:nth-child(even){background:#F7F9FD}
+table.tbl tbody tr:hover{background:#EEF3FB}
+.src{font-size:13px;color:#8A94A6;line-height:1.7;border-top:1px solid var(--line);padding-top:8px;margin-top:10px}
+
+/* 跟进轨迹独立页 */
+.track-tbl th{white-space:nowrap}
+.track-tbl td:last-child{width:30%}
+tr.add-row td{background:#FBFCFF}
+tr.add-row td.last{position:relative;padding-right:20px}
+tr.add-row td .cell{display:block;min-height:1.2em;outline:1px dashed transparent;border-radius:3px;cursor:text}
+tr.add-row td .cell:hover{outline-color:#9CBBE8;background:#FCFDFF}
+tr.add-row td .cell:focus{outline:1.5px solid #3A6BB5;background:#FBFDFF}
+.delx{
+  position:absolute;right:2px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;line-height:13px;text-align:center;border-radius:50%;
+  background:#FDECEC;color:#C00000;font-size:11px;font-weight:700;cursor:pointer;user-select:none;
+}
+.delx:hover{background:#C00000;color:#fff}
+.tbl tbody td:last-child{position:relative;padding-right:22px}
+.delx{opacity:0;transition:opacity .12s}
+.tbl tbody tr:hover .delx{opacity:1}
+.tbl td.empty-hint{color:#98A3B8;text-align:center;font-size:13.5px;letter-spacing:.05em}
+.pgdel{font-size:11px;color:#C00000;cursor:pointer;border:1px solid #E5B4B4;border-radius:5px;padding:2px 8px;background:#fff;letter-spacing:.04em;user-select:none}
+.pgdel:hover{background:#C00000;color:#fff}
+.track-tools{display:flex;align-items:center;gap:12px;margin:4px 0 2px}
+.addrow-btn{
+  border:1px solid var(--blue);background:#fff;color:var(--navy);
+  font-family:inherit;font-size:12.5px;font-weight:700;padding:4px 14px;border-radius:6px;
+  cursor:pointer;letter-spacing:.06em;
+}
+.addrow-btn:hover{background:#EDF2FA}
+.addrow-hint{font-size:11px;color:var(--gray);letter-spacing:.02em}
+.hl-red{color:var(--red);font-weight:600}
+
+/* 客户首页顶栏 */
+.cust-banner{margin:0 0 16px;padding-bottom:12px;border-bottom:2px solid var(--navy)}
+.cust-kicker{font-size:12px;letter-spacing:.22em;color:var(--gray);text-transform:uppercase;margin-bottom:6px}
+.cust-name{font-size:36px;font-weight:800;color:var(--navy);letter-spacing:.01em;line-height:1.2}
+.cust-sub{font-size:13.5px;color:var(--ink2);margin-top:7px}
+.cust-sub span{display:inline-block;margin-right:14px}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11.5px;font-weight:700;color:#fff;letter-spacing:.04em}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:16px 0 5px}
+.card{background:var(--card);border:1px solid #E3EAF6;border-radius:5px;padding:9px 11px}
+.card .k{font-size:12px;color:var(--gray);letter-spacing:.05em}
+.card .v{font-size:15px;font-weight:600;color:#1B2A44;margin-top:3px}
+
+/* 首页信息卡：常驻可编辑窗口 */
+.editable-field{
+  outline:1px dashed transparent;border-radius:3px;cursor:text;min-height:1.3em;
+  transition:outline-color .15s,background .15s;
+}
+.editable-field:hover{outline-color:#9CBBE8;background:#FCFDFF}
+.editable-field:focus{outline:1.5px solid #3A6BB5;background:#FBFDFF}
+
+/* 四页模板：非首页的客户窄条 + 子标题 */
+.cust-strip{display:flex;align-items:center;gap:10px;margin:0 0 2px;padding-bottom:9px;border-bottom:2px solid var(--navy)}
+.cust-strip .cs-no{font-size:11.5px;font-weight:800;color:#fff;background:var(--navy);border-radius:4px;padding:2px 7px;letter-spacing:.06em}
+.cust-strip .cs-nm{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:.01em}
+.cust-strip .cs-cat{margin-left:auto;font-size:12px;color:var(--gray);letter-spacing:.16em}
+.sub-h{font-size:14.5px;font-weight:700;color:var(--blue);margin:14px 0 7px;padding-left:10px;position:relative;letter-spacing:.02em}
+.sub-h::before{content:"";position:absolute;left:0;top:4px;width:3px;height:13px;border-radius:2px;background:var(--blue);opacity:.75}
+
+/* 目录 */
+.toc-h{font-size:28px;font-weight:800;color:var(--navy);letter-spacing:.04em;margin:6px 0 2px}
+.toc-s{font-size:12px;letter-spacing:.24em;color:var(--gray);margin-bottom:20px}
+.toc-row{display:flex;align-items:baseline;gap:0;padding:9px 4px;border-bottom:1px dashed #E4EAF4;cursor:pointer;border-radius:3px}
+.toc-row:hover{background:#F2F6FC}
+.toc-no{width:30px;font-size:11.5px;color:var(--gray);font-variant-numeric:tabular-nums}
+.toc-name{font-size:15px;font-weight:600;color:#1B2A44;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toc-dot{flex:1;border-bottom:1px dotted #C9D4E6;margin:0 8px;transform:translateY(-3px)}
+.toc-pg{font-size:12.5px;color:var(--navy);font-weight:700;font-variant-numeric:tabular-nums;width:26px;text-align:right}
+.toc-tier{width:16px;text-align:center;font-size:9px;font-weight:800;margin-right:2px}
+
+/* ---------------- 工具条 ---------------- */
+#bar{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  display:flex;align-items:center;gap:6px;padding:7px 10px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(31,56,100,.12);border-radius:14px;
+  box-shadow:0 10px 34px rgba(20,35,64,.16);z-index:200;font-size:12px;
+}
+#bar button{
+  border:0;background:transparent;color:#2B3A55;font-size:12px;font-family:inherit;
+  padding:6px 9px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:.15s;
+}
+#bar button:hover{background:#EDF2FA;color:var(--navy)}
+#bar button.pri{background:var(--navy);color:#fff}
+#bar button.pri:hover{background:#16294A}
+#bar button.act{background:#E7EEFA;color:var(--navy);box-shadow:inset 0 0 0 1px #C9D8EF}
+#bar .sep{width:1px;height:20px;background:#E1E7F1;margin:0 3px}
+#bar .pgn{font-variant-numeric:tabular-nums;color:#4A5566;min-width:76px;text-align:center;font-size:11.5px}
+#bar input[type=range]{width:120px;accent-color:var(--navy)}
+#bar select{
+  border:1px solid #DFE6F1;background:#fff;border-radius:8px;padding:5px 6px;
+  font-size:11.5px;font-family:inherit;color:#2B3A55;max-width:170px;
+}
+/* 全屏阅读：工具条闲置自动隐藏 */
+#bar{transition:opacity .45s ease, transform .45s ease}
+body.barhide #bar{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(18px)}
+#hint{
+  position:fixed;left:50%;bottom:82px;transform:translateX(-50%);
+  background:rgba(31,56,100,.92);color:#fff;font-size:12px;padding:8px 16px;border-radius:20px;
+  opacity:0;pointer-events:none;transition:.3s;z-index:210;
+}
+#hint.show{opacity:1}
+#toast{
+  position:fixed;right:22px;top:22px;background:rgba(31,56,100,.95);color:#fff;font-size:12px;
+  padding:10px 16px;border-radius:10px;opacity:0;transform:translateY(-6px);transition:.25s;z-index:220;
+}
+#toast.show{opacity:1;transform:none}
+
+/* 编辑态 */
+body.editing .page.on [data-eid]{outline:1px dashed transparent;border-radius:3px;transition:outline-color .15s}
+body.editing .page.on [data-eid]:hover{outline-color:#9CBBE8;background:#FCFDFF}
+body.editing .page.on [data-eid]:focus{outline:1.5px solid #3A6BB5;background:#FBFDFF}
+body.editing #editFlag{display:inline-flex}
+#editFlag{display:none;align-items:center;gap:5px;font-size:10.5px;color:#C00000;font-weight:700;letter-spacing:.04em}
+#editFlag i{width:6px;height:6px;border-radius:50%;background:#C00000;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* 字体格式工具条（编辑模式显示） */
+#fmt{
+  position:fixed;left:50%;bottom:76px;transform:translateX(-50%);
+  display:none;align-items:center;gap:6px;padding:6px 10px;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(31,56,100,.12);border-radius:12px;
+  box-shadow:0 10px 30px rgba(20,35,64,.16);z-index:200;font-size:12px;
+  transition:opacity .45s ease;
+}
+body.editing #fmt{display:flex}
+body.barhide #fmt{opacity:0;pointer-events:none}
+#fmt label{font-size:11px;color:#4A5566;white-space:nowrap}
+#fmt select{
+  border:1px solid #DFE6F1;background:#fff;border-radius:8px;padding:4px 5px;
+  font-size:11.5px;font-family:inherit;color:#2B3A55;
+}
+#fmt input[type=color]{
+  width:28px;height:24px;border:1px solid #DFE6F1;border-radius:6px;
+  padding:1px;background:#fff;cursor:pointer;
+}
+#fmt button{
+  border:1px solid #DFE6F1;background:#fff;color:#2B3A55;font-size:11.5px;
+  font-family:inherit;padding:4px 9px;border-radius:8px;cursor:pointer;font-weight:700;white-space:nowrap;
+}
+#fmt button:hover{background:#EDF2FA;color:var(--navy)}
+#fmt .fhint{font-size:10.5px;color:#98A3B8;white-space:nowrap}
+
+/* ============ 主页总览表 + 7日提醒 ============ */
+.ov-h{display:flex;align-items:baseline;gap:14px;margin:2px 0 10px}
+.ov-t{font-size:30px;font-weight:800;color:var(--navy);letter-spacing:.04em}
+.ov-sum{font-size:14px;color:var(--ink2)}
+table.ov{width:100%;border-collapse:collapse;font-size:14px;line-height:1.55;table-layout:fixed}
+table.ov th{background:var(--navy);color:#fff;font-weight:600;text-align:left;padding:6px 8px;border:1px solid #172B4E;letter-spacing:.02em;font-size:14px}
+table.ov td{padding:5px 8px;border:1px solid var(--line);vertical-align:top;word-break:break-word;overflow:hidden}
+table.ov tbody tr:nth-child(even){background:#F7F9FD}
+table.ov tr.due-red td{background:#FCEDEC}
+table.ov .editable-field{display:block;min-height:1.2em}
+.ov-link{cursor:pointer;color:var(--navy);border-bottom:1px dashed rgba(31,56,100,.45)}
+.ov-link:hover{color:#C00000;border-bottom-color:#C00000}
+.rem-red{color:var(--red);font-weight:700}
+.rem-ok{color:#1E7B34;font-weight:600}
+.rem-gray{color:#98A3B8}
+.rem-blue{color:#2E5496;font-weight:600}
+.rem-badge{display:inline-block;min-width:14px;text-align:center;background:#C00000;color:#fff;border-radius:8px;font-size:10px;line-height:14px;padding:0 4px;margin-left:3px;font-weight:700}
+#remPanel{
+  position:fixed;right:22px;top:58px;width:340px;max-height:72vh;overflow:auto;
+  background:rgba(255,255,255,.98);border:1px solid rgba(31,56,100,.15);border-radius:12px;
+  box-shadow:0 14px 40px rgba(20,35,64,.24);padding:14px 14px 10px;z-index:230;display:none;font-size:12px;
+}
+#remPanel.show{display:block}
+#remPanel h4{margin:0 0 4px;color:var(--navy);font-size:13.5px;display:flex;align-items:center;justify-content:space-between}
+#remPanel .rp-sub{font-size:11px;color:var(--gray);margin-bottom:8px}
+.rem-item{display:flex;align-items:center;gap:8px;padding:6px;border-bottom:1px dashed #E4EAF4;cursor:pointer;border-radius:6px}
+.rem-item:hover{background:#F2F6FC}
+.rem-item .rn{font-weight:700;color:#1B2A44}
+.rem-item .rc{color:var(--gray);font-size:11px}
+.rem-item .rd{margin-left:auto;color:var(--red);font-weight:700;white-space:nowrap}
+
+/* ============ 每日全网追新 ============ */
+#newsPanel{
+  position:fixed;right:22px;top:58px;width:470px;max-height:76vh;overflow:auto;
+  background:rgba(255,255,255,.98);border:1px solid rgba(31,56,100,.15);border-radius:12px;
+  box-shadow:0 14px 40px rgba(20,35,64,.24);padding:14px 14px 10px;z-index:230;display:none;font-size:12px;
+}
+#newsPanel.show{display:block}
+#newsPanel h4{margin:0 0 4px;color:var(--navy);font-size:13.5px;display:flex;align-items:center;justify-content:space-between}
+#newsPanel .rp-sub{font-size:11px;color:var(--gray);margin-bottom:8px;line-height:1.6}
+.news-cust{margin-bottom:8px}
+.nc-head{display:flex;align-items:center;padding:5px 8px;background:#F2F6FC;border-radius:6px;cursor:pointer}
+.nc-head:hover{background:#E7EEFA}
+.nc-head .rn{font-weight:700;color:#1B2A44;font-size:12.5px}
+.nc-head .rd{margin-left:auto;color:var(--navy);font-weight:700;font-size:11px}
+.n-fresh{
+  display:inline-block;background:var(--red);color:#fff;border-radius:8px;
+  font-size:9.5px;line-height:14px;padding:0 4px;font-weight:700;flex:none;margin-top:1px;
+}
+.n-date{color:var(--navy);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:11px;margin-top:1px}
+.n-tag{flex:none;padding:0 5px;border-radius:8px;font-size:10px;font-weight:700;color:#fff;margin-top:1px}
+.n-tt{flex:1;color:#1B2A44}
+.n-link{flex:none;color:#2E5496;text-decoration:none;border-bottom:1px dashed rgba(46,84,150,.5);white-space:nowrap;font-size:11px}
+.n-link:hover{color:var(--red);border-bottom-color:var(--red)}
+.news-row{display:flex;align-items:flex-start;gap:5px;padding:5px 4px 5px 8px;border-bottom:1px dashed #E4EAF4;line-height:1.5}
+.news-row.fresh{background:#FFF9F7}
+.news-item{
+  position:relative;padding:5px 9px;margin:0 0 6px;
+  background:#F7FAFF;border:1px solid #E3EAF6;border-left:3px solid var(--blue);
+  border-radius:4px;font-size:15px;line-height:1.6;
+}
+.news-item.fresh{border-left-color:var(--red);background:#FFF9F7}
+.news-item .n-date{font-size:12px;margin-right:6px}
+.news-item .n-tag{padding:0 6px;border-radius:9px;font-size:10.5px;margin-right:6px}
+.news-item .n-tt{font-weight:600;color:#1B2A44}
+.news-item .n-src{margin-left:8px;font-size:12.5px}
+.news-item .n-src a{color:#2E5496;text-decoration:none;border-bottom:1px dashed rgba(46,84,150,.5)}
+.news-item .n-src a:hover{color:var(--red);border-bottom-color:var(--red)}
+.news-item .n-sum{margin-top:3px;font-size:13.5px;color:var(--ink2);line-height:1.65}
+
+/* ---------------- 打印 ---------------- */
+@media print{
+  @page{size:A4 landscape;margin:0}
+  html,body{overflow:visible;background:#fff;height:auto}
+  #bar,#hint,#toast,#remPanel,#newsPanel,#fmt{display:none!important}
+  #measure{display:none!important}
+  #stage{position:static;display:block;perspective:none}
+  #book{transform:none!important;filter:none;zoom:.665;width:1680px;height:945px}
+  .page{
+    display:block!important;position:relative!important;inset:auto;
+    width:1680px;height:944.5px;page-break-after:always;break-after:page;
+    animation:none!important;transform:none!important;box-shadow:none;border-radius:0;
+  }
+  .page::after{display:none}
+  .track-tools{display:none!important}
+  .delx{display:none!important}
+  .pgdel{display:none!important}
+  tr.add-row td .cell{outline:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="stage"><div id="book"></div></div>
+
+<div id="bar">
+  <button id="btnPrev" title="上一页 ←">‹</button>
+  <span class="pgn" id="pgn">– / –</span>
+  <button id="btnNext" title="下一页 →">›</button>
+  <input type="range" id="slider" min="0" max="0" value="0">
+  <span class="sep"></span>
+  <select id="jump"><option value="">跳转客户…</option></select>
+  <button id="btnToc">总览</button>
+  <button id="btnRem" title="超7天未跟进客户清单">🔔 提醒</button>
+  <button id="btnNews" title="每日全网追新动态（由 news-data.js 驱动）">🌐 追新</button>
+  <span class="sep"></span>
+  <button id="btnEdit">编辑</button>
+  <span id="editFlag"><i></i>编辑中</span>
+  <button id="btnPrint">打印</button>
+  <button id="btnData">数据</button>
+  <button id="btnReset" title="撤销全部文字修改">还原</button>
+  <span class="sep"></span>
+  <button id="btnFull">全屏</button>
+</div>
+
+<div id="fmt">
+  <label>字号</label>
+  <select id="fmtSize">
+    <option value="">—</option>
+    <option value="13px">13</option>
+    <option value="15px">15</option>
+    <option value="18px">18</option>
+    <option value="21px">21</option>
+    <option value="24px">24</option>
+    <option value="28px">28</option>
+    <option value="32px">32</option>
+    <option value="38px">38</option>
+  </select>
+  <label>字体</label>
+  <select id="fmtFamily">
+    <option value="">—</option>
+    <option value='"Microsoft YaHei",sans-serif'>微软雅黑</option>
+    <option value='"SimSun",serif'>宋体</option>
+    <option value='"SimHei",sans-serif'>黑体</option>
+    <option value='"KaiTi",serif'>楷体</option>
+    <option value='"FangSong",serif'>仿宋</option>
+  </select>
+  <label>颜色</label>
+  <input type="color" id="fmtColor" value="#C00000" title="文字颜色">
+  <label>底色</label>
+  <input type="color" id="fmtBg" value="#FFF3B8" title="背景高亮">
+  <button id="fmtBold" title="所选文字 / 所在块加粗">B 加粗</button>
+  <button id="fmtClear" title="清除所选文字或所在块的自定义格式">✕ 清除格式</button>
+  <span class="fhint">选中文字后设置；未选中则对整个文本块/单元格生效</span>
+</div>
+
+<div id="hint"></div>
+<div id="toast"></div>
+<div id="remPanel">
+  <h4>🔔 7日跟进提醒<span style="font-size:10.5px;color:var(--gray);font-weight:400">Esc 关闭</span></h4>
+  <div class="rp-sub">以下客户距最近跟进已超 7 天，点击任一行跳转到该客户</div>
+  <div id="remList"></div>
+</div>
+<div id="newsPanel">
+  <h4>🌐 每日全网追新<span style="font-size:10.5px;color:var(--gray);font-weight:400">Esc 关闭</span></h4>
+  <div class="rp-sub" id="newsSub"></div>
+  <div id="newsList"></div>
+</div>
+<script src="news-data.js"></script>
+<input type="file" id="fileIn" accept=".json" style="display:none">
+
+<script>
+const DATA = {"title":"36 家客户商业画像记录册","subtitle":"分层 · 商机 · 卡点 · 下一步动作","date":"2026-11-02","compiled":"2026-11-03","source":"《客户信息总表（2026-11-02 更新版）》— 客户台账 / 跟进记录 / 联系人管理","tiers":{"S":{"desc":"现金牛 / 必须赢","color":"#C00000"},"A":{"desc":"主力攻坚 / 窗口明确","color":"#C55A11"},"B":{"desc":"维护运营 / 补信息","color":"#2E5496"},"C":{"desc":"暂缓 / 通道退化","color":"#808080"}},"clients":[{"no":"01","name":"SK海力士","tier":"S","tierTag":"现金牛·增量卡死","type":"FAB","cluster":"B 晶圆厂","priority":"P0","status":"进行中","lastFollow":"2026-10-26","cutoff":"2026-11-02","contacts":9,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c1-s1-b1","text":"**年 1000 桶氟化液的在手现金牛，增量全押在二厂新线物料选型这一件事上。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c1-s2-b1","items":["**核心业务（精简）**：韩资全资 IDM，SK海力士全球核心 NAND 产能基地；Intel 仅历史前身，2025.03 已完成大连业务股权交割。大连一厂月产能约 10 万片 12 寸；主营 3D NAND 晶圆与企业级 SSD（Solidigm 负责品牌与销售）。下游为 AI 算力服务器、云存储与企业存储阵列，偏 B 端大客户。二厂搁置近四年后重启。","🌐 **规模与扩产**：2025 年对大连 NAND 厂投资 4406 亿韩元（同比 +52%）；注册资本 2024.12 由 26→28 亿美元、2025.12 再→31 亿美元。二厂 2026.08 重启、最早 2026.11 装机、2027H1 量产，新增月投片约 5 万片，大连总产能 10→15 万片/月（+50%）。","🌐 **机台与制程**：一厂转 192 层并汰换老旧设备；二厂 V8 238 层（另有说法主攻成熟浮栅 100+ 层）。台账「ATS 3 通道 Chiller」对应 ATS Nikola 3K/5K：水箱 2.6 加仑≈10L，20-80℃ 推荐 FC-3283、-10~20℃ 推荐 Novec-7200。二厂相当比例为韩国迁来的闲置设备（移机）。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c1-s3-b1","head":["项目","内容"],"rows":[["需求产品","ORING / LC-110 / LC-200 / FC-3283 / Novec-7200"],["台账累计用量","FC-3283 1309 桶 / Novec-7200 700 桶（累计）"],["Forecast / 年需求","FC-3283 600 桶 + Novec-7200 400 桶 = 1000 桶/年"],["实测成交金额","🔴待补充（台账未记金额）"],["实测单价","🔴待补充"],["冷却/使用场景","测试机台类（高低温冲击，年补充量大）"],["SRM","有（账号密码按规范不写入本表）"]]},{"k":"callout","id":"c1-s3-b2","text":"**商业价值判断**：累计已交付 2000 桶、Forecast 仍有 1000 桶/年，是全表单一客户最大的金额池；但国产替代线（LC-110/JD-7076/O-ring）从 7 月送样到现在一台机都没上，卡点是客户没有测试机台，不是产品不行。二厂 2026.11 装机把选型决策提前到 Q4，这个窗口一旦错过，新线 baseline 会被竞品锁 3-5 年。"}]},{"title":"四、关键联系人（9 人）","blocks":[{"k":"table","id":"c1-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["张丽萍","设备采购","采购","在职","18904094455 / 15141196220","—","台账重复录入两行"],["刘保伟","蚀刻零配件采购","采购","在职","189 0409 2506","baowei.liu@dl.skhynix.com","—"],["邹川","主任工程师","技术/使用","在职","18904092669","chuan.zou@dl.skhynix.com","国产替代测试的关键人"],["Nichole","氟化液采购","采购","在职","13504080580","xiangyun.yu@dl.skhynix.com","—"],["DORA","采购","采购","在职","—","jinling.shao@dl.skhynix.com","—"],["terry.chen","yinxian 老板","决策层","在职","—","terry.chen@dl.skhynix.com","职位写成「yinxian 老板」，表述异常"],["yinxian","质量经理","质量","在职","—","xiangyun.yu@dl.skhynix.com","⚠️ 邮箱与 Nichole 完全重复，疑似录错，需现场核实"],["张海红","—","未标注","在职","18904091992","—","职位空白"],["户翠翠","—","未标注","在职","15940853050","—","职位空白"]]},{"k":"quote","id":"c1-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c1-s5-b1","items":["国产替代线 LC-110/JD-7076 自 7 月送样至今一台机未上，卡在客户无测试机台、产能排满","90 桶 FC-3283 包装变形","台账无决策层联系人，全为执行层","联系人 yinxian 邮箱与 Nichole 完全重复，疑似录错","3M 已退 PFAS，若我方为渠道库存则货源趋紧。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c1-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["🔥 P0","抢在 2026.11 装机前完成二厂物料选型","以「二厂新线物料选型」为由书面立项催测试，我方出 SOP + 风险兜底换确定上机日期","邹川（主任工程师）/ Nichole（氟化液采购）→ 🔴二厂选型负责人","测试立项书 + SOP + 上机日期","本月内","客户无测试机台、产能排满；二厂选型人未识别"]]},{"k":"p","id":"c1-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c1-s6-b3","items":["以「二厂新线物料选型」为由书面立项催测试，我方出 SOP + 风险兜底（失败不计费、机台污染赔付）换确定上机日期；大连排不出则走第三方同型号 Lam 机台等效验证","主动带 90 桶包装变形整改报告 + 新包装方案上门","与 Nichole 月度对齐，1000 桶 forecast 拆成叫料甘特图，给特瑞堡 PTFE 尺寸报告设硬截止日。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c1-s7-b1","items":["🔴 二厂设备与物料选型负责人是谁（比邹川更关键）","🔴 我方 7200/3283 是自有品牌还是渠道库存","🔴 决策层联系人。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c1-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-07-18","微信","跟进大桶分装 FC-3283 缺口（173 桶），持续与铭铭对接；跟踪新订单 FC-3283（250 桶）到货计划；跟进邹川 LC-110/JD-7076 测试进展；2 条 391 已寄出","跟进测试情况"],["2026-07-18","微信","邹川送样测试的 LC-110 / JD-7076 各 200kg","跟进测试进度和测试效果"],["2026-08-16","邮件","user wangdongpeng 新需求 2 条 391 胶圈（免费样品），刘总邮件回复同意","跟进到货情况"],["2026-08-17","微信","分装的 1 吨（50 桶）已安排发货","跟进物流到货信息、报关"],["2026-09-28","邮件","3 个 PTFE 胶圈测尺寸，特瑞堡未提供报告","催报告和胶圈退回海力士"],["2026-09-28","微信","400 桶 7200 抽取 4 个批次测试验真假","待确认真品后安排标签发货"],["2026-10-07","其他","—","燊济仓库 7200 发货事宜；特瑞堡 3 条 PTFE 测试件发货事宜"],["2026-10-26","其他","90 桶 FC-3283 包装变形整改送货、报关；108 桶 7200 送货、报关；工厂 3.2 吨 3283 分装包装标签等事宜","—"]]},{"k":"source","id":"c1-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"02","name":"稷以科技","tier":"S","tierTag":"存量最大·复购失焦","type":"设备厂","cluster":"A 设备厂","priority":"P1","status":"进行中","lastFollow":"2026-11-02","cutoff":"2026-11-02","contacts":4,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c2-s1-b1","text":"**全表 O-ring 金额第一大客户（213.97 万），但复购节奏目前靠猜。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c2-s2-b1","items":["**核心业务（精简）**：国产等离子体与真空热制程设备厂商，创始团队控股并引入多家国资产业基金参股（非国资控股）。产品含等离子体去胶（灰化）、等离子刻蚀、等离子氮化、炉管薄膜沉积、ALD 及等离子表面处理。适配 150/200/300mm 硅基及 GaN、SiC 化合物半导体。下游为硅基 Fab、化合物半导体厂、LED 厂与先进封装厂。","🌐 **规模与扩产**：产品线 Proxima、JETKepler、JMCyber、JETVenus、Mars、Metis、Virgo、Hesita 等系列。","🌐 **机台与制程**：等离子去胶/刻蚀/氮化 + 炉管 ALD/薄膜沉积；覆盖 150-300mm，含化合物半导体工艺。","**客户类型 / 集群**：设备厂 / A 设备厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c2-s3-b1","head":["项目","内容"],"rows":[["需求产品","大金 O-ring"],["台账累计用量","1090 条（2,139,742 元）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","2,139,742 元"],["实测单价","1963 元/条（全表最高，大金高牌号大规格）"],["冷却/使用场景","设备腔体类（非冷却场景）"],["SRM","无"]]},{"k":"callout","id":"c2-s3-b2","text":"**商业价值判断**：1090 条、单价 1963 元/条，金额与单价都是全表第一，说明在大金高牌号上我方是主要来源，议价权在我们这边；问题是 5 个订单长期不叫料压着库存、机台用量清单还没拿到研发复核，等于不知道客户真实年需求。先拿到用量清单，复购就从「等客户下单」变成「按台推算」。"}]},{"title":"四、关键联系人（4 人）","blocks":[{"k":"table","id":"c2-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["张海洋","供管经理","供应链","在职","13761892154","—","—"],["廖振","采购经理","采购","在职","17301725201","—","—"],["杨猛（总）","—","决策层","在职","—","—","—"],["曾永娟","采购","采购","在职","18419062995","—","发货事宜对接人"]]},{"k":"quote","id":"c2-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c2-s5-b1","items":["5 个订单（62015128/62015701/62015991/62015992/62016481）长期未叫料，库存订单压着","371 胶圈报价（大金周总）未回复","机台 O-ring 用量清单未获研发复核。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c2-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⚠️ 先止损","清库存订单 + 拿用量清单","5 个订单长期未叫料；机台 O-ring 用量清单未获研发复核","张海洋（供管经理）/ 廖振 / 曾永娟","研发复核后的用量清单 + 库存订单发货计划","2 周内","库存订单积压"]]},{"k":"p","id":"c2-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c2-s6-b3","items":["拿到研发复核后的机台 O-ring 用量清单（这是打开复购的钥匙）并同步大金周总","催 371 胶圈报价回复","联系曾永娟落实库存订单发货计划。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c2-s7-b1","items":["🔴 机台 O-ring 用量清单终版","🔴 年度 forecast","🔴 371 胶圈报价结果。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c2-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-03","微信","6 月订单中删除 G480，已汇报徐总并重新处理，旧订单作废、新订单签署","—"],["2026-08-14","微信","订单备货整理，等通知发货（预计 9 月）","周一约张总讨论：没有出过的 4 件，下周找研发确认是否需要，不需要就处理掉"],["2026-08-17","微信","已把信息同步，未回复","—"],["2026-09-28","邮件","国庆节过后会叫料 2 个机台的 O-ring","—"],["2026-10-07","其他","—","联系曾永娟沟通发货事宜"],["2026-10-26","微信","机台 O-ring 用量清单（未得到研发复核），及时跟进同步给大金周总；库存订单发货计划跟进","—"],["2026-11-02","微信","371 胶圈报价未回复（大金 周总）","—"]]},{"k":"source","id":"c2-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"03","name":"新凯来-深圳","tier":"S","tierTag":"体系最大盘子·份额不足10%","type":"设备厂","cluster":"A 设备厂","priority":"P0","status":"进行中","lastFollow":"2026-08-28","cutoff":"2026-11-02","contacts":12,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c3-s1-b1","text":"**密封件年盘子 1000-2000 万的体系级客户，我们只从代采通道拿到 87 万。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c3-s2-b1","items":["**核心业务（精简）**：深圳市国资全资控股的前道半导体设备平台型企业，前身华为 2012 实验室星光工程部，2022 年剥离独立。产品以国内名山命名，覆盖刻蚀、扩散、氧化、薄膜沉积、清洗等工艺装备及光学量测、缺陷检测、X 射线量测。面向 12 寸逻辑、存储、功率器件 Fab。2026 年湾区半导体博览会已宣布全面量产。","🌐 **规模与扩产**：员工近 2 万人；在手订单超 100 亿元；估值：工业业务（不含光刻机）650 亿、整体近 1000 亿。营收预测 2025 年 45 亿 → 2026 年 75 亿（+67%）→ 2028 年 169 亿，2027 年启动 IPO。客户含深圳鹏芯微、中芯国际、上海华虹、长江存储。设备毛利率约 50%，精密零组件占设备价值约 30%。","🌐 **机台与制程**：工艺装备：刻蚀（武夷山）、扩散（峨眉山/三清山）、薄膜沉积（普陀山 PVD / 阿里山 ALD / 峨眉山 EPI）、清洗。量检测：岳麓山 BFI、赤霞山 XPS、六盘山 PMI、井冈山 mEBI。覆盖 12 寸前道全流程；在上海设有测试晶圆厂加速国产元器件认证。","**客户类型 / 集群**：设备厂 / A 设备厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c3-s3-b1","head":["项目","内容"],"rows":[["需求产品","O-ring / PDR / 泛塞封"],["台账累计用量","🔴待补充（通过金旅宏代采下单）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","金旅宏通道 874,350.39 元（体系内实测最大一笔）"],["实测单价","金旅宏通道 109 元/条"],["冷却/使用场景","设备腔体 + 厂务冷却（待确认）"],["SRM","有（账号密码按规范不写入本表）"]]},{"k":"callout","id":"c3-s3-b2","text":"**商业价值判断**：2026 营收 75 亿（+67%）、设备毛利约 50%、精密零组件占设备价值约 30%，密封件随设备出货同步放大；但我们拿到的是金旅宏通道的单，本体 13 个联系人全是 USER/采购/材料评估组，没有选型决策人——这是份额上不去的组织原因，不是产品原因。减震项目 8 月已商务中止，善后没做完就谈新单会持续丢分。"}]},{"title":"四、关键联系人（12 人）","blocks":[{"k":"table","id":"c3-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["蔡泽锴","USER","技术/使用","在职","14750290775","—","—"],["杨晓峰","USER","技术/使用","在职","17843129277","—","—"],["蓝祧汉","采购","采购","在职","15818505580","—","—"],["姚经理","材料评估组","技术/评估","在职","13615730784","—","减震项目商务中止的相关方"],["陈佳芳","user","技术/使用","在职","—","—","—"],["黄志炜（星光）","研发工程师","技术/使用","在职","—","huangzhiwei@sunlit-cn.com","—"],["李家铭","采购","采购","在职","—","jiaming_li@sicarrier.com","—"],["王琦","—","未标注","在职","—","—","职位空白"],["周辉","—","未标注","在职","—","—","职位空白"],["李工","—","技术/使用","在职","—","—","—"],["王泽宇（星光）","user","技术/使用","在职","—","—","—"],["李亚萍","—","未标注","在职","17393039640","—","职位空白"]]},{"k":"quote","id":"c3-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c3-s5-b1","items":["减震项目 2026-08-14 因技术参数无法改变、工厂做不出合格成品，已走商务中止（部分完成订单已开票），这条线在丢分","设备物料选型归口部门不明，台账只有 USER/采购/材料评估组，无选型决策人","我们份额不足体系密封件盘子的 10%。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c3-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["🔥 P0","把份额从 <10% 提上去","绕开代采直接对接设备物料/选型部门；同步处理减震项目商务中止善后","李家铭（采购）/ 杨晓峰、蔡泽锴（USER）→ 选型决策人","选型部门对接 + 减震项目善后方案","本月内","台账无选型决策人；减震项目已中止"]]},{"k":"p","id":"c3-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c3-s6-b3","items":["绕开代采直接对接新凯来设备物料/选型部门","同步处理减震项目商务中止的善后","借助上海测试晶圆厂推动国产密封件认证。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c3-s7-b1","items":["🔴 设备物料选型归口部门与决策人","🔴 PDR 封水测试项目结论","🔴 单机密封件用量清单。"]},{"k":"p","id":"c3-s7-b2","text":"**跨客户共性待确认（与本客户相关）**："},{"k":"ul","id":"c3-s7-b3","items":["[客户侧] 设备物料选型归口部门是谁？（台账只有 USER/采购/材料评估组，无选型决策人） → 影响：决定 1000-2000 万/年盘子的入口；核实对象：李家铭 / 杨晓峰"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c3-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","周五线上会议（姚姜恒经理）关于减震项目交流，无法改变技术参数，工厂无法生产合格成品，会通过商务中止（部分完成订单），订单已开票","—"],["2026-08-20","邮件","—","特瑞堡技术交流会 2026-08-21 14:30-15:30"],["2026-08-28","其他","—","2:10~3:10 线上会议 PDR 封水测试项目"]]},{"k":"source","id":"c3-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"04","name":"金旅宏（新凯来）","tier":"A","tierTag":"代采通道","type":"中间（代采）","cluster":"A 设备厂（代采通道）","priority":"P1","status":"进行中","lastFollow":"2026-08-20","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c4-s1-b1","text":"**新凯来的影子通道，109 元/条的价，值不值得维护取决于能不能穿透到本体。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c4-s2-b1","items":["**核心业务（精简）**：新凯来的代采通道，自然人 100% 控股的小微民企。主营半导体器件专用设备研发制造销售，兼集成电路设计、芯片销售、半导体分立器件、电池配套与进出口贸易。赛道偏汽车电子配套，不是头部前道设备厂商——它是通道，不是需求方，所有量最终取决于新凯来。","🌐 **规模与扩产**：—","🌐 **机台与制程**：—","**客户类型 / 集群**：中间（代采） / A 设备厂（代采通道）"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c4-s3-b1","head":["项目","内容"],"rows":[["需求产品","O-ring / 泛塞封"],["台账累计用量","8010 条（874,350.39 元）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","874,350.39 元"],["实测单价","109 元/条"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c4-s3-b2","text":"**商业价值判断**：8010 条 / 87.44 万，是体系里我们唯一在跑的量；但它是自然人控股的小微贸易商，不掌握选型，价格被压到 109 元。守通道的同时必须向上穿透，否则永远拿不到专用件和高价品类。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c4-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["Suky","采购","采购","在职","13641403006","jlh_7@jlh2022.cn","—"]]},{"k":"quote","id":"c4-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c4-s5-b1","items":["JLH202610000616 订单未交付（交期 10 周，刘总答应部分提拉到 8 周）","代采通道价值受制于新凯来本体决策。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c4-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c4-s6-b2","items":["跟进 JLH202610000616 交付","王琦项目 9 个泛塞到货后联系 Sia 发货（注意包装标签）","向上穿透到新凯来本体。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c4-s7-b1","items":["🔴 新凯来本体年度密封件需求量与分配规则。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c4-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","王琦项目 20 个泛塞（赵丹与工厂沟通），下周先行交付 9 个优先发给客户","—"],["2026-08-20","微信","王琦项目的 9 个泛塞已到货，联系 Sia 发货（注意包装标签）","—"]]},{"k":"source","id":"c4-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"05","name":"上海曦鸣","tier":"C","tierTag":"通道退化","type":"中间（代采）","cluster":"A 设备厂（代采通道）","priority":"暂缓","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":2,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c5-s1-b1","text":"**只剩一个联系人活着的新凯来代采通道，连 PDR 项目是否还活着都不确定。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c5-s2-b1","items":["**核心业务（精简）**：新凯来代采通道，上游为晶鸿，需求 PDR。台账无公司简介、无用量、无 Forecast。","🌐 **规模与扩产**：—","🌐 **机台与制程**：—","**客户类型 / 集群**：中间（代采） / A 设备厂（代采通道）"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c5-s3-b1","head":["项目","内容"],"rows":[["需求产品","PDR"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c5-s3-b2","text":"**商业价值判断**：原对接人盛洋洋已离职，台账无简介、无用量、无 forecast、无跟进记录，唯一线索是上游晶鸿。投入产出比极低，先花一次电话确认项目存亡，再决定要不要救。"}]},{"title":"四、关键联系人（2 人）","blocks":[{"k":"table","id":"c5-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["盛洋洋","采购","采购","**已离职**","—","—","离职，通道失效"],["howrad","负责人","决策层","在职","—","—","—"]]},{"k":"quote","id":"c5-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c5-s5-b1","items":["联系人盛洋洋已标记离职，仅剩 howrad（负责人），通道在退化。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c5-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⏸ 暂缓","维持最低接触","微型贸易商或通道退化，不值得投入资源","姚晏宁 / 温跃东 / 张经理、孔令东 / howrad","—","按需","注册资本 10-30 万，曦鸣联系人已离职"]]},{"k":"p","id":"c5-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c5-s6-b3","items":["确认 howrad 是否仍为有效对接人","确认 PDR 项目是否继续。"]},{"k":"p","id":"c5-s6-b4","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c5-s6-b5","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["电话确认 howrad 是否仍负责 PDR、项目是否继续","席健 / 原渠道介绍人","1 页通道状态结论（继续/归档）","本周内","无有效联系人，只能靠人脉转接"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c5-s7-b1","items":["🔴 公司简介、用量、forecast、有效联系人。"]},{"k":"source","id":"c5-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"06","name":"北京亦顺为","tier":"S","tierTag":"被严重低估·国产DUV","type":"中间（代采）","cluster":"D 贸易/代采渠道","priority":"P0","status":"进行中","lastFollow":"2026-10-26","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c6-s1-b1","text":"**单价 79 元的「通用件供应商」，背后是国产 DUV 光刻机（宇量昇）这条最高门槛的线。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c6-s2-b1","items":["**核心业务（精简）**：自然人全资控股小微民企，主营半导体器件专用设备研发制造销售、光伏设备制造销售，兼专用设备维修、机电设备维保与配套进出口。定位为小微配套装备商，非半导体前道头部主机设备厂。台账备注：终端为上海宇量昇。","🌐 **规模与扩产**：🔴 高价值线索：终端上海宇量昇 = 深圳新凯来 + 上海创科微双城国资联手的国产浸没式 DUV 光刻机主体，已启动量产，2026 年交付约 5 台、2027 年约 20 台，客户含中芯、华虹、长鑫；2025 年 9 月中芯已开始测试其 DUV。","🌐 **机台与制程**：最先进机型对标 ASML 2007-2008 年水平（接近 NXT:1950i），设计目标 28nm 单次曝光。光刻机是密封件要求最高的应用（温控、真空、洁净度全拉满）。","**客户类型 / 集群**：中间（代采） / D 贸易/代采渠道"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c6-s3-b1","head":["项目","内容"],"rows":[["需求产品","FKM 及泛塞"],["台账累计用量","5759 条（457,171.98 元）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","457,171.98 元"],["实测单价","79 元/条（全表最低，严重偏低）"],["冷却/使用场景","光刻机温控/真空（待确认）"],["SRM","无"]]},{"k":"callout","id":"c6-s3-b2","text":"**商业价值判断**：终端上海宇量昇 = 新凯来 + 上海创科微双城国资的浸没式 DUV 主体，2026 交付约 5 台、2027 约 20 台，客户是中芯/华虹/长鑫；光刻机对密封件的温控、真空、洁净度要求是全行业最高。我们在这条线上出了 5759 条却只卖 79 元/条，是四条实测线里最便宜的，几乎可以确定只供了通用件。专用件做进去，单机价值量能翻数倍，是全表投入产出比最高的一次立项。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c6-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["曹静超","采购","采购","在职","13231900882","jingchao.cao@yswsfx.com","终端为上海宇量昇"]]},{"k":"quote","id":"c6-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c6-s5-b1","items":["SJXS-2026080101、SJXS-2026092001 订单未交付（前者本月可交付）","单价仅 79 元/条，明显低于光刻机密封件应有价值，疑似只供通用件，未切入专用件。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c6-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["🔥 P0","切入国产 DUV 光刻机密封件","摸清宇量昇 DUV 机台密封件需求规格与单机用量，确认 79 元单价对应的是通用件还是专用件","曹静超（采购）→ 穿透至宇量昇使用部门","密封件规格清单 + 单机用量 + 报价分层","2 周内","终端身份需客户确认；我方为二级供应商"]]},{"k":"p","id":"c6-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c6-s6-b3","items":["摸清宇量昇 DUV 机台密封件需求规格与单机用量","确认 79 元单价对应的是通用件还是光刻机专用件","跟进未交付订单到货。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c6-s7-b1","items":["🔴 宇量昇具体供哪类设备","🔴 单机密封件用量与规格","🔴 是否存在专用件切入机会。"]},{"k":"p","id":"c6-s7-b2","text":"**跨客户共性待确认（与本客户相关）**："},{"k":"ul","id":"c6-s7-b3","items":["[客户侧] 终端具体供哪类设备？单机密封件用量与规格？79 元是通用件还是光刻机专用件？ → 影响：决定能否切入高价值 DUV 密封件；核实对象：曹静超 → 穿透终端"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c6-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","SJXS-2026080101 下单数量各 110 个格莱圈","跟进到货情况"],["2026-09-28","微信","新订单 20 条 RVA100160-T40SM 双签完成，已下单","—"],["2026-10-26","微信","订单到货计划跟进和发货","—"]]},{"k":"source","id":"c6-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"07","name":"武汉欣申试","tier":"B","tierTag":"断单待查","type":"中间（代采）","cluster":"A 设备厂（代采通道）","priority":"P2","status":"进行中","lastFollow":"2026-08-14","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c7-s1-b1","text":"**今年一桶没下单的新凯来代采，断单原因还没查清。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c7-s2-b1","items":["**核心业务（精简）**：湖北本地试剂/实验室耗材与危化品一级代理商，前身 2002 年起步。自有甲乙丙类危化仓库与危化运输车队，省内现货供应链服务商，现货 SKU 八万+，参保 50 余人。供应实验室级高纯试剂与清洗溶剂，不生产电子特气、光刻胶等半导体大宗制程材料，偏向实验室小包装耗材。终端为新凯来。","🌐 **规模与扩产**：—","🌐 **机台与制程**：—","**客户类型 / 集群**：中间（代采） / A 设备厂（代采通道）"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c7-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","🔴待补充（今年未下单）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","设备/实验室冷却（待确认）"],["SRM","无"]]},{"k":"callout","id":"c7-s3-b2","text":"**商业价值判断**：去年有 LC-110-20K 的走量，今年归零且问不出原因，最可能是终端不用了或渠道被换掉，两种结论对应完全不同的动作。查清之前不追加投入，查清之后再决定救通道还是绕开。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c7-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["袁星星","采购经理","采购","在职","15202744257","whsshg_hwzy@126.com","—"]]},{"k":"quote","id":"c7-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c7-s5-b1","items":["代采氟化液 LC-110 今年未下单，问了袁经理原因未知","代采通道退化信号。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c7-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c7-s6-b2","items":["需徐总协助联系新凯来使用部门，查清断单真实原因（是终端不用了还是渠道被换掉）。"]},{"k":"p","id":"c7-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c7-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["通过徐总约新凯来使用部门，问清是终端停用还是渠道被替换","徐总 / 袁星星（采购经理）","断单原因书面结论 + 是否恢复的判断","2 周内","我方接触不到终端使用部门"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c7-s7-b1","items":["🔴 断单原因","🔴 新凯来使用部门对接人","🔴 年度需求量。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c7-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","给新凯来代采氟化液 LC-110（今年未下单），问了联系人袁经理，原因未知","需要徐总协助联系新凯来使用部门"]]},{"k":"source","id":"c7-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"08","name":"宜兴中车","tier":"B","tierTag":"实质停摆","type":"FAB","cluster":"B 晶圆厂","priority":"P2","status":"待启动","lastFollow":"2026-08-26","cutoff":"2026-11-02","contacts":2,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c8-s1-b1","text":"**商务已中止、采购不敢做主的 8 寸功率厂，力气应该转到株洲。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c8-s2-b1","items":["**核心业务（精简）**：株洲中车时代半导体全资子公司，中车集团在长三角布局的 8 寸功率芯片制造基地，IDM 一体化（晶圆制造 + 功率模块封装）。一期投资 59 亿，2024 年 6 月首批芯片下线、当年 10 月正式投产，基建预留扩产空间。一期年产 36 万片 8 英寸中低压 IGBT 晶圆，土建可支撑 72 万片/年，配套封装线规划年产 500 万只 IGBT 模块。下游以新能源汽车为主力。","🌐 **规模与扩产**：—","🌐 **机台与制程**：8 寸硅基晶圆产线 + 功率模块封装；应用为新能源汽车、光伏储能、工业变频、充电桩等中低压场景。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c8-s3-b1","head":["项目","内容"],"rows":[["需求产品","ORING"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c8-s3-b2","text":"**商业价值判断**：2026-09-28 内部申请审批中止执行已完成，未交付订单已邮件确认取消，采购赵钊因历史 case「不敢做主」。宜兴短期没有商业价值，正确动作是把资源转到株洲本体，用 SiC 新线重新立项。"}]},{"title":"四、关键联系人（2 人）","blocks":[{"k":"table","id":"c8-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["陈香华","—","未标注","在职","—","chenxh1@csrzic.com","职位空白"],["赵钊","采购","采购","在职","—","zhaozhao@csrzic.com","「因历史 case 不敢做主」"]]},{"k":"quote","id":"c8-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c8-s5-b1","items":["O-ring 业务 2026-09-28 内部申请审批中止执行已完成","因历史 case 问题，采购赵钊「不敢做主」","未交付订单已邮件确认取消。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c8-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c8-s6-b2","items":["走株洲层面而非宜兴采购","先解决历史 case 的信任问题再谈新单。"]},{"k":"p","id":"c8-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c8-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["暂缓宜兴全部动作，将资源并入株洲 SiC 新线项目组","席健","客户资源重新分配说明（1 页）","本月内","历史 case 未定性，重启无抓手"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c8-s7-b1","items":["🔴 历史 case 的具体内容与责任界定","🔴 是否有重启可能。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c8-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","follow 株洲中车，前期 oring 询价未有下文，了解到因历史 case 问题不敢做主","需要徐总协助公关株洲的负责人"],["2026-08-26","邮件","未交付订单已通过邮件发送给宜兴采购赵钊","—"],["2026-09-28","邮件","赵钊邮件已回复：对 24 年未交付物料取消确认","内部申请审批中止执行已完成"]]},{"k":"source","id":"c8-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"09","name":"株洲中车时代半导体有限公司","tier":"A","tierTag":"SiC新线窗口","type":"FAB","cluster":"B 晶圆厂","priority":"P2","status":"进行中","lastFollow":"2026-10-07","cutoff":"2026-11-02","contacts":4,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c9-s1-b1","text":"**8 寸 SiC 2026.03 通线、年产 36 万片的央企 IDM，是这家客户唯一还开着的门。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c9-s2-b1","items":["**核心业务（精简）**：央企（国务院国资委）控股的大功率功率半导体 IDM，自有 8 寸功率晶圆产线并布局 SiC 宽禁带产线。产品含 IGBT、FRD、IGCT、晶闸管、SiC 碳化硅器件与功率模块。应用覆盖轨道交通、特高压直流输电、新能源汽车、风电光伏储能、工业变频、船舶电力电子。","🌐 **规模与扩产**：8 英寸 SiC 产线 2026 年 3 月通线投产（三期），总投资 53 亿元，新征用地 266 亩，达产新增年产 36 万片 8 英寸 SiC 功率器件。时代电气 2026H1：IGBT 产线持续满产，8 寸 SiC 产能爬坡顺利，汽车功率模块国内市占 14%（第二）。后续储备：株洲 SiC 全产业链项目约 80 亿元，2026 年可研、2027 年启动。","🌐 **机台与制程**：五大核心工艺攻关：精细光刻、沟槽刻蚀、高温栅氧、高温离子注入、大尺寸 SiC 减薄——刻蚀与离子注入机台密集。第 8 代逆导 IGBT 已量产，SiC 第 3/3.5 代平面栅量产、第 4 代沟槽栅送样。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c9-s3-b1","head":["项目","内容"],"rows":[["需求产品","O-ring / 氟化液 JD-7076"],["台账累计用量","🔴待补充（台账记「用量不大」）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","刻蚀机 chiller（封闭循环，待确认）"],["SRM","有（账号密码按规范不写入本表）"]]},{"k":"callout","id":"c9-s3-b2","text":"**商业价值判断**：刻蚀、高温离子注入机台密集，O-ring 与氟化液都有位置；但台账明确「O-ring 业务无法开展、蔡追不敢做主」，说明老线已被锁死。别在宜兴耗，直接用 SiC 新线（53 亿投资、36 万片/年）走株洲层面立项，测试报告是敲门砖。"}]},{"title":"四、关键联系人（4 人）","blocks":[{"k":"table","id":"c9-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["邹同卫","—","未标注","在职","—","—","职位空白"],["蔡追","oring 选型负责人","技术/决策","在职","15989305020","—","「不敢做主」"],["彭争懿","采购","采购","在职","15873302747","—","—"],["邓晶娜","采购","采购","在职","17373361913","—","—"]]},{"k":"quote","id":"c9-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c9-s5-b1","items":["台账明确「Oring 业务无法开展，蔡追不敢做主」「氟化液用量不大」","测试样品报告未出（已跟进铭铭）。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c9-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","用 SiC 新线（36 万片/年）立项","走株洲层面而非宜兴采购；先提供 LC-110 测试报告","叶明 / 蔡追（oring 选型）/ 彭争懿、邓晶娜（采购）","LC-110 测试报告 + SiC 新线机台清单","2 个月内","「蔡追不敢做主」，宜兴线已明确中止"]]},{"k":"p","id":"c9-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c9-s6-b3","items":["联系叶明提供 LC-110 测试报告","用 SiC 新线（36 万片/年）立项，走株洲层面公关而非宜兴采购。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c9-s7-b1","items":["🔴 SiC 新线的机台清单与冷却介质选型时点","🔴 株洲层面决策人。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c9-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","氟化液 LC-110 还算稳定，本身用量不大；Oring 业务无法开展，蔡追不敢做主","—"],["2026-09-28","微信","测试样品报告未出，已跟进铭铭","—"],["2026-10-07","其他","—","联系叶明，提供 LC-110 的测试报告"]]},{"k":"source","id":"c9-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"10","name":"苏州宸微","tier":"A","tierTag":"导入期定点","type":"设备厂","cluster":"A 设备厂","priority":"P1","status":"进行中","lastFollow":"2026-10-27","cutoff":"2026-11-02","contacts":6,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c10-s1-b1","text":"**迈为控股的刻蚀/ALD 新势力，正在客户导入期——首装件定点的窗口就在这几个月。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c10-s2-b1","items":["**核心业务（精简）**：前道刻蚀与 ALD 主机设备厂商，为上市民企迈为股份控股跨界半导体的载体，员工跟投、无国资背景。产品为高选择比刻蚀设备与 ALD 原子层沉积设备。面向 12 寸晶圆，覆盖逻辑、存储、功率器件产线，处于客户导入放量阶段。","🌐 **规模与扩产**：迈为的资金实力 + 宸微处于导入期 = 首装件放量前的定点窗口。","🌐 **机台与制程**：高选择比刻蚀 + ALD；12 寸。","**客户类型 / 集群**：设备厂 / A 设备厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c10-s3-b1","head":["项目","内容"],"rows":[["需求产品","O-RING / LC-200"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","设备腔体 + 冷却（待确认）"],["SRM","无"]]},{"k":"callout","id":"c10-s3-b2","text":"**商业价值判断**：导入期意味着供应商还没固化，一旦随机台定型就是 3-5 年的复购；迈为的资金实力保证它不会半路停摆。当前唯一开关是样品测试结果，测试一过必须立刻谈首装件份额，别等它进量产再进。"}]},{"title":"四、关键联系人（6 人）","blocks":[{"k":"table","id":"c10-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["尹艳超 / 黄勇","—","未标注","在职","—","—","两人合填一格，需拆分"],["徐善良","—","未标注","在职","18710849512","—","职位空白"],["朱睿智","O-ring 采购","采购","在职","—","ruizhi.zhu@micropolaris.com.cn","—"],["陈克飞","氟化液采购","采购","在职","—","—","—"],["王凯麟","—","未标注","在职","—","—","职位空白"],["王祥","—","未标注","在职","18800368858","—","特瑞堡凌涛推动的项目方"]]},{"k":"quote","id":"c10-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c10-s5-b1","items":["样品测试结果未出，决定后续能否放量","O-ring 侧靠特瑞堡凌涛推动王祥项目。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c10-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c10-s6-b2","items":["本周五拜访带测试样品","送样后跟进测试情况","推动王祥项目启动。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c10-s7-b1","items":["🔴 样品测试结果","🔴 年度需求量","🔴 LC-200 与 O-ring 各自对接人。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c10-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","特瑞堡凌涛持续发力推动王祥项目启动","拜访"],["2026-10-26","微信","跟进样品到货时间和进度","—"],["2026-10-27","微信","本周五拜访把测试样品带去","送样后跟进测试情况"]]},{"k":"source","id":"c10-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"11","name":"鲁汶","tier":"A","tierTag":"IPO扩产同步","type":"设备厂","cluster":"A 设备厂","priority":"P1","status":"进行中","lastFollow":"2026-11-02","cutoff":"2026-11-02","contacts":12,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c11-s1-b1","text":"**离子束国内第一、在手订单 13.41 亿、正投 13.65 亿建临港 12 寸基地的设备厂。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c11-s2-b1","items":["**核心业务（精简）**：前道核心工艺主机设备厂，离子束与 VPD 为特色强项，创始团队控股并有国资产业基金参股。产品含 IBS 离子束塑形、IBD 离子束沉积（MRAM 核心工艺设备，国内稀缺）、ICP 电感耦合等离子体刻蚀、CVD 薄膜沉积、VPD 气相分解金属沾污收集设备。适配 8/12 寸，覆盖逻辑、存储、MRAM、功率器件、第三代半导体与光电子产线。","🌐 **规模与扩产**：2026-06-30 科创板 IPO 获受理，拟募资 25 亿元。营收 2023 年 2.07 亿 → 2024 年 2.68 亿 → 2025 年 6.99 亿（三年 +237.8%），2026 上半年 4.17 亿。在手订单（截至 2026-08-31）13.41 亿元。客户集中度极高：2025 年第一大客户占比 43.11%，前五大 72.86%。股东含国家大基金三期（7.29%，第二大股东）。尚未盈利，预计最早 2027 年盈亏平衡。","🌐 **机台与制程**：离子束设备国内市占 28.4%，全国第一；ICP 刻蚀约 1.22%（主攻 3D 存储高深宽比刻蚀）。现有仅江苏邳州单一基地，正投 13.65 亿建上海临港研发制造基地（4.3 万㎡），重点扩 12 寸机台产能。","**客户类型 / 集群**：设备厂 / A 设备厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c11-s3-b1","head":["项目","内容"],"rows":[["需求产品","JD-7076 / E-band / 阀板"],["台账累计用量","11 条 XS00030087 + 4 桶 JD-7076（备货中）；此前 10 条 Eseal-JPF24、7 条 XS00030087"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充（台账未记 O-ring 金额）"],["实测单价","🔴待补充"],["冷却/使用场景","设备冷却（JD-7076）"],["SRM","有（账号密码按规范不写入本表）"]]},{"k":"callout","id":"c11-s3-b2","text":"**商业价值判断**：2026H1 营收 4.17 亿、IPO 拟募 25 亿，机台产量直接决定 E-band/阀板/JD-7076 用量；客户集中度高（第一大客户 43%）说明它自己也被大厂绑定，我们跟它的节奏就等于跟下游节奏。风险在内部：采购冯丹已离职，继任者不明，报价与交付都可能断线。"}]},{"title":"四、关键联系人（12 人）","blocks":[{"k":"table","id":"c11-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["冯丹","采购","采购","**已离职**","—","dan.feng@leuven-instruments.com","需补继任者"],["沙文燕","采购","采购","在职","18762905473","wenyan.sha@leuven-instruments.com","—"],["冯仰金","采购","采购","在职","—","—","—"],["李浩","user","技术/使用","在职","—","—","—"],["尹格华","经理","决策层","在职","—","—","—"],["董琪","user","技术/使用","在职","—","—","—"],["王琳琳","E-band 测试负责人","技术/使用","在职","—","—","—"],["徐涛","—","未标注","在职","—","—","职位空白"],["邸黎寅","—","未标注","在职","—","—","职位空白"],["刘炜","高温 ICP 项目","技术/使用","在职","17606189173","—","—"],["李娜","—","未标注","在职","—","—","职位空白"],["朱磊","资深经理","决策层","在职","—","—","—"]]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c11-s5-b1","items":["采购冯丹已标记离职","第二基地建设期交付节奏可能波动。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c11-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P1","借 IPO 扩产推 E-band/阀板放量","临港 13.65 亿扩 12 寸产能，同步推 E-band/阀板；补全冯丹离职后的采购对接人","朱磊（资深经理）/ 王琳琳（E-band）/ 沙文雁（采购）","12 寸扩产后的年度需求预测","1 个月内","冯丹离职，采购对接断档"]]},{"k":"p","id":"c11-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c11-s6-b3","items":["节后提醒郭慧霞发 4 桶 JD-7076","借 IPO 扩产（临港 13.65 亿）同步推 E-band/阀板放量","补全冯丹离职后的采购对接人。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c11-s7-b1","items":["🔴 12 寸机台扩产后的 E-band/阀板年度需求","🔴 冯丹继任者。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c11-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","新下单 10 条 Eseal-JPF24_X500030087","—"],["2026-08-18","其他","已通过鲁汶 SRM 系统上传发票","—"],["2026-09-29","其他","收到 2 桶 20kg 包装 JD-7076，因国庆长假在即，节后发货","节后提醒郭慧霞发货"],["2026-10-26","其他","新订单备货（7 条 XS00030087）","—"],["2026-11-02","其他","新订单备货（11 条 XS00030087）和 4 桶 JD-7076","—"]]},{"k":"source","id":"c11-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"12","name":"中芯国际(上海)","tier":"S","tierTag":"性价比最高的一单","type":"FAB","cluster":"B 晶圆厂","priority":"P0","status":"待启动","lastFollow":"2026-10-27","cutoff":"2026-11-02","contacts":9,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c12-s1-b1","text":"**产品已认可、计划已排好、只差一个物管准入的 60 桶/年。**"},{"k":"p","id":"c12m-s1-b1","text":"**并入：中芯 S1 8 寸线**——料号已通过京仪导入建好、尚未下单，属顺手可拿的量（原第 14 家，2026-11-06 并入）。"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c12-s2-b1","items":["**核心业务（精简）**：中芯国际总部所在地，张江厂区含多条 8 寸、12 寸产线（Fab1/Fab2/Fab3）、光掩膜版工厂与研发中心，是中芯最早、最核心的制造基地。2000 年落地张江，大陆最早的大型商用晶圆代工厂。8/12 英寸，成熟工艺为主（0.35μm~28nm），代工逻辑、射频、功率器件、CIS、存储、MCU 等。","🌐 **规模与扩产**：集团级：2025 年新增约 5 万片/月 12 寸产能，2026 年再增约 4 万片/月；2025 资本开支 81 亿美元，2026 维持 80 亿美元以上。2026Q1 月产能 107.83 万片（折合 8 寸标准逻辑），产能利用率 93.1%，3 座 8 寸 + 7 座 12 寸厂。8 寸 BCD 特色工艺涨价 10%。政策硬要求新建产线国产设备占比不低于 50%，中芯主动缩短本土厂商验证流程。","🌐 **机台与制程**：测试机台为 TSK 探针台、金海通 handler；JD-7076 对应 2 个机台、4 个 chiller。已完成测试并出报告，与 3M 7200 对比结果理想（同期送样另有新宙邦、兮璞）。LC-110 密度 1.83 g/ml ≈ 10.93 L/桶。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c12-s3-b1","head":["项目","内容"],"rows":[["需求产品","JD-7076"],["台账累计用量","60 桶/年（每月 5 桶 × 6 个月）"],["Forecast / 年需求","60 桶/年"],["实测成交金额","🔴待补充（未下单，无成交金额）"],["实测单价","🔴待补充"],["冷却/使用场景","测试机台类（探针台/handler，真现金牛）"],["SRM","无"]]},{"k":"callout","id":"c12-s3-b2","text":"**商业价值判断**：测试报告已出、与 3M 7200 对比结果理想、每月 5 桶×6 个月的叫料计划都排好了，唯一卡点是「不是 SH 的 AVL 不能下单」。这是全表路径最短、成本最低的一单，AVL 一过就能复制到中芯其他厂，本周资源应该压在这一个会上。"},{"k":"p","id":"c12m-s3-h","text":"**—— 并入：中芯 S1 8 寸 需求与商机 ——**"},{"k":"table","id":"c12m-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","🔴待补充（未下单）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c12m-s3-b2","text":"**商业价值判断**：物料号已通过京仪导入并建立，说明准入完成，剩下的是行政惯性而不是技术问题。一次现场拜访就可能出单，投入极小，属于顺手能拿的量。"}]},{"title":"四、关键联系人（9 人）","blocks":[{"k":"table","id":"c12-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["徐小清（上海）","采购经理","采购","在职","18916122301","xiaoqing_xu2@smics.com","AVL 事宜的关键对接人"],["张如山","设计服务的实验室 负责人","技术/使用","在职","021-38610000 分机 18850","Rosson_Zhang@smics.com","—"],["龚文剑","—","未标注","在职","13585796506","—","项目组待装机，需求验证 LC-110"],["纪涛","—","未标注","在职","18964588578","—","职位空白"],["张洋洋","设计服务的实验室 user","技术/使用","在职","—","YangYang_Zhang3@smics.com","—"],["杨善波","蚀刻经理","技术/使用","在职","—","—","—"],["张知俊","设备工程师","技术/使用","在职","18501781938","—","下单进度跟进人"],["柳利斌","—","未标注","在职","—","—","职位空白"],["张文华","设备工程师","技术/使用","在职","—","—","—"]]},{"k":"quote","id":"c12-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]},{"k":"quote","id":"c12m-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c12-s5-b1","items":["卡在物管：因不是 SH 的 AVL 不能下单，周四上会报批。这是全表性价比最高、路径最短的一单——产品已认可、计划已排好，只差一个行政环节。","【S1 8寸】料号已建好但一直未下单，缺少临门一脚。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c12-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["🔥 P0","解锁 60 桶/年 JD-7076","盯住周四上会结果，AVL 一过立即锁 6 个月叫料计划（每月 5 桶）","徐小清（采购经理）/ 张如山（实验室负责人）","AVL 生效确认 + 6 个月叫料计划","本周四（上会日）起 1 周内","物管系统准入，非产品问题"]]},{"k":"p","id":"c12-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c12-s6-b3","items":["盯住周四上会结果，AVL 一过立即锁 6 个月叫料计划","整理拜访徐小清材料（年度议价 + 免费样品）","跟进龚文剑项目组待装机需求。"]},{"k":"p","id":"c12m-s6-h","text":"**—— 并入：中芯 S1 8 寸 下一步 ——**"},{"k":"table","id":"c12m-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","催临门一脚","料号已建好，现场拜访催叫料","张知俊 / 杨善波 / 张文华","下单时间确认","2 周内","只差下单动作"]]},{"k":"ol","id":"c12m-s6-b3","items":["拜访咨询什么时候下单，现场催叫料。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c12-s7-b1","items":["🔴 周四上会结果","🔴 AVL 生效时间","🔴 能否签成框架","🔴 张知俊下单进度。","🔴 公司简介","🔴 年度需求量","🔴 下单决策人。"]},{"k":"p","id":"c12-s7-b2","text":"**跨客户共性待确认（与本客户相关）**："},{"k":"ul","id":"c12-s7-b3","items":["[客户侧] 周四上会结果？AVL 何时生效？每月 5 桶 × 6 个月能否签成框架？ → 影响：直接解锁 60 桶/年；核实对象：徐小清 / 俊哥"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c12-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-07-10","电话","送样 25kg JD-7076，有 3 家送样（新宙邦、兮璞）；总用量 10 台探针台和 2 台 handler，测试机台 TSK、金海通；已完成测试并出报告，与 3M 7200 对比结果理想","—"],["2026-07-18","电话","已与采购徐小清、用户张如山会面，了解 JD-7076 选择标准","持续跟进后续选型动态，约拜访了解进度"],["2026-08-18","电话","了解 LC-110 体积：密度 1.83g/ml ≈ 10.93L，需邮件回复","已邮件回复"],["2026-09-28","邮件","中芯年度议价已上传（未降价），免费样品报价未回复","节后拜访徐小清解释（预约拜访）"],["2026-09-28","其他","杨善波介绍同事龚文剑项目组，目前待装机，需求验证 LC-110 数量待定","跟进龚文剑"],["2026-10-07","其他","—","整理拜访徐小清材料、邮件拜访；年度议价和免费样品事宜"],["2026-10-26","微信","跟进张知俊下单进度；联系张如山了解 JD-7076 选择和建物料号","—"],["2026-10-27","微信","俊哥：卡在物管，因不是 SH 的 AVL 不能下单，这周四上会报好后可以下单。每月下单 5 桶 × 6 个月，2 个机台、4 个 chiller","🔥 盯上会结果"],["2026-08-05","微信","【S1 8寸】帮忙建物料号（LC-110），通过京仪导入，料号已建好","拜访咨询什么时候下单"]]},{"k":"source","id":"c12-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"13","name":"中芯国际(天津)","tier":"A","tierTag":"存量已跑通","type":"FAB","cluster":"B 晶圆厂","priority":"P2","status":"进行中","lastFollow":"2026-10-26","cutoff":"2026-11-02","contacts":3,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c13-s1-b1","text":"**已下单 120 桶、还压着 32 桶 pending 的 8 寸主力厂。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c13-s2-b1","items":["**核心业务（精简）**：中芯国际旗下核心 8 英寸主力制造基地，2003 年落地西青，国内单体规模很大的 8 寸产线。月产能约 15 万片（满产），成熟制程 0.35μm~90nm 为主。代工品类含 PMIC 电源管理、功率器件、指纹芯片、MCU、模拟芯片、车规级芯片与传感器，车规工控成熟工艺产能集中。","🌐 **规模与扩产**：8 寸 fab 约 125 台 TCU → 初装 125 桶量级，与已下单 120 桶吻合。","🌐 **机台与制程**：8 英寸产线；成熟制程。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c13-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","已下单 120 桶 + 32 桶 pending 未叫货"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充（台账未记金额）"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认（8 寸厂，场景待核实）"],["SRM","无"]]},{"k":"callout","id":"c13-s3-b2","text":"**商业价值判断**：8 寸厂约 125 台 TCU，120 桶的量与初装口径吻合，说明这单以一次性初装为主，后续靠 top-off；真正要问清的是 32 桶为什么不叫货、需求归潘华还是李学彬。落地后天津就是中芯体系里第二个可复制的样板。"}]},{"title":"四、关键联系人（3 人）","blocks":[{"k":"table","id":"c13-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["王倩","供管（天津）","供应链","在职","18017379373","qian_wang5@smics.com","—"],["潘华","刻蚀经理","技术/使用","在职","—","—","与李学彬需求归属待确认"],["李学彬","刻蚀经理","技术/使用","在职","18920269011","—","与潘华需求归属待确认"]]},{"k":"quote","id":"c13-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c13-s5-b1","items":["32 桶 pending 未叫货","需确认是潘华经理还是李学彬经理的需求。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c13-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","推动 32 桶 pending 落地","联系潘华与李学彬确认叫料计划与需求归属","王倩（供管）/ 潘华、李学彬（刻蚀经理）","32 桶叫料确认 + 年度补充量","2 周内","需求归属两位经理未分清"]]},{"k":"p","id":"c13-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c13-s6-b3","items":["联系潘华经理与李学斌经理确认叫料计划，推动 32 桶 pending 落地。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c13-s7-b1","items":["🔴 年度补充量（是封闭循环 top-off 还是测试机台高频补充）","🔴 需求归属经理。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c13-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","电话","新下单 120 桶签署，确认是潘华经理还是李学彬经理的需求","—"],["2026-09-28","其他","出差天津拜访潘华经理等","—"],["2026-10-26","其他","联系潘华经理和李学斌经理的叫料计划","—"]]},{"k":"source","id":"c13-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"14","name":"中芯东方","tier":"A","tierTag":"新线初装","type":"FAB","cluster":"B 晶圆厂","priority":"P1","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":2,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c15-s1-b1","text":"**中芯临港 12 寸大基地，O-ring 与氟化液双线都在，但台账几乎空白。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c15-s2-b1","items":["**核心业务（精简）**：中芯国际临港 12 寸大基地（Fab9），2021 年设立，一期投产、二期持续建设。主打 12 英寸成熟制程晶圆代工，规划多条 12 寸产线，面向成熟逻辑、功率、模拟、车规芯片。是中芯未来成熟工艺核心增量基地。","🌐 **规模与扩产**：中芯 2026 年新增 4 万片/月的主力落点之一 → 新线初装窗口。观研口径中芯 2026 年新增 12 寸月产能 8-10 万片（含中芯京城、中芯东方、中芯深圳等）。","🌐 **机台与制程**：12 英寸；成熟制程逻辑、功率器件、MCU、模拟、车规芯片、传感器。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c15-s3-b1","head":["项目","内容"],"rows":[["需求产品","o-ring"],["台账累计用量","🔴待补充"],["Forecast / 年需求","中性增量 +60~80 桶（初装）"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认（12 寸新线，初装为主）"],["SRM","无"]]},{"k":"callout","id":"c15-s3-b2","text":"**商业价值判断**：中芯 2026 年新增 4 万片/月的主力落点之一，新线初装是唯一能重新定义 baseline 的时点，介入越早成本越低。现在只有宣荣峰（O-ring）、魏莲莲（氟化液）两个名字，连需求细项都没有，先建联系再谈方案。"}]},{"title":"四、关键联系人（2 人）","blocks":[{"k":"table","id":"c15-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["宣荣峰经理","—","未标注","在职","—","rongfeng_xuan@smics.com","O-ring 对接人"],["魏莲莲","采购","采购","在职","—","lotus@smics.com","氟化液对接人"]]},{"k":"quote","id":"c15-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c15-s5-b1","items":["台账仅有联系人（宣荣峰、魏莲莲），无用量、无跟进状态、无最近跟进日期——信息几乎空白。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c15-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P1","新线初装窗口提前 12 个月介入","找宣荣峰（O-ring）/ 魏莲莲（氟化液）建立联系","宣荣峰 / 魏莲莲","需求产品细项 + 机台清单 + 初装时点","1 个月内","台账信息几乎空白"]]},{"k":"p","id":"c15-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c15-s6-b3","items":["找宣荣峰（O-ring）/ 魏莲莲（氟化液）建立联系","卡住新线初装窗口提前介入。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c15-s7-b1","items":["🔴 公司简介之外的全部字段：需求产品细项、用量、forecast、跟进状态、机台清单。"]},{"k":"source","id":"c15-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"15","name":"万益景盛","tier":"B","tierTag":"先止损","type":"中间商","cluster":"D 贸易/代采渠道","priority":"⚠️先止损","status":"进行中","lastFollow":"2026-12-02","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c16-s1-b1","text":"**双签合同不回传、货款催不结的 3 人贸易商。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c16-s2-b1","items":["**核心业务（精简）**：半导体密封件、液气密元件、真空配件、阀门、泵类、橡塑制品与电子专用材料分销商，附带少量零部件研发、设备维修与进出口，参保仅 3 人的小型贸易配套商。不是 Fab 厂，也不是前道主机设备厂。","🌐 **规模与扩产**：—","🌐 **机台与制程**：—","**客户类型 / 集群**：中间商 / D 贸易/代采渠道"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c16-s3-b1","head":["项目","内容"],"rows":[["需求产品","O-RING"],["台账累计用量","44 条 XSO0009064 + 20 条"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充（台账未记金额）"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c16-s3-b2","text":"**商业价值判断**：44+20 条的量不大，但合同与回款两个基础动作都没闭环，还出现过「已结清后又出新欠款」。在合同拿回来、欠款结清之前不谈任何增量，这是纪律问题不是商务问题。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c16-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["谢总","老板","决策层","在职","—","—","回款与双签合同的责任人"]]},{"k":"quote","id":"c16-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c16-s5-b1","items":["双签合同未回传","货款催结未清","历史货款曾「已全部结清」后又出现新欠款，回款纪律差。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c16-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⚠️ 先止损","催回款 + 追双签合同","双签合同未回传、货款未结清，回款前不做新增投入","谢总（老板）","回签合同 + 货款结清","2 周内","回款纪律差"]]},{"k":"p","id":"c16-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c16-s6-b3","items":["先催回款、追回双签合同，再谈增量。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c16-s7-b1","items":["🔴 未回签合同原因","🔴 欠款金额与账期","🔴 韩国产 O-ring 的终端去向。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c16-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","其他","之前的货款已全部结清，新订单 44 条 XSO0009064 待发货","—"],["2026-09-23","微信","20 条 XSO0009064 合同未回签","胶圈已到货安排发货和开票，要回签合同"],["2026-10-07","其他","—","节前同意的货款是否结清和催款"],["2026-12-02","微信","双签合同未回传","⚠️ 催回传"]]},{"k":"source","id":"c16-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"16","name":"沈阳富创","tier":"A","tierTag":"大客户小份额","type":"机加件","cluster":"A 设备厂","priority":"P2","status":"进行中","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":3,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c17-s1-b1","text":"**前三季度 38 亿营收、同比 +39% 的零部件平台，我们只有一笔 8 月小单。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c17-s2-b1","items":["**核心业务（精简）**：半导体设备精密零部件厂商，给刻蚀、沉积、离子注入等主机设备厂供应腔体、气体传输模组等核心精密金属件。2008 年成立，2022 年科创板上市，国内半导体零部件第一股，具备 7nm 级先进制程零部件量产能力。员工 3000+，客户覆盖国内头部设备厂与海外设备大厂。","🌐 **规模与扩产**：2026 前三季度营收 38.00 亿元（+39.19%），Q3 单季 14.82 亿（+47.31%），归母净利 2.33 亿（+522.10%）。在手订单 19.24 亿（5 月末）。沈阳 + 南通 + 北京三大基地，规划年产值超 60 亿；北京基地产能利用率由 2025 年 7.05% 提升至 2026Q1 的 16.82%，表面处理基地由 29.99% → 67.11%。五大专项：匀气盘、特殊涂层、加热盘、静电卡盘、阀门。","🌐 **机台与制程**：精密金属件加工 + 表面处理；7nm 级能力。","**客户类型 / 集群**：机加件 / A 设备厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c17-s3-b1","head":["项目","内容"],"rows":[["需求产品","ORING"],["台账累计用量","100 EA（AS568A-009，材质 VITON 7575）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充（台账未记金额）"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c17-s3-b2","text":"**商业价值判断**：富创买 O-ring 是配套随整机交付，它产量翻倍等于配套密封件需求翻倍；北京基地产能利用率从 7.05% 升到 16.82%、表面处理从 29.99% 升到 67.11%，扩产是确定的。台账连最近跟进日期都没有，说明这条线根本没人管，补人是第一动作。"}]},{"title":"四、关键联系人（3 人）","blocks":[{"k":"table","id":"c17-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["吴偊灏","采购","采购","在职","—","—","—"],["李垚","采购","采购","在职","—","—","—"],["吴施雨","采购","采购","在职","—","—","—"]]},{"k":"quote","id":"c17-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c17-s5-b1","items":["典型的「大客户小份额」：富创自己是零部件平台商，买 O-ring 大概率自用配套随整机交付，其产量翻倍 → 配套密封件需求同步翻倍，但我们只有一笔 8 月小单。台账无跟进状态、无最近跟进日期。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c17-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","大客户小份额，补份额","按富创产能增速（前三季度 +39.19%）同步争取配套密封件份额","吴偊灏 / 李垚 / 吴施雨（采购）","三个基地各自的采购归口 + 年度需求量","2 个月内","台账无跟进状态与最近跟进日期"]]},{"k":"p","id":"c17-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c17-s6-b3","items":["补全对接与跟进","按富创产能增速同步争取配套份额。"]},{"k":"p","id":"c17-s6-b4","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c17-s6-b5","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["指定专职对接人，摸清沈阳/南通/北京三基地各自的 O-ring 采购归口与年用量","席健 + 区域销售","三基地采购归口清单 + 年用量估算","3 周内","台账无跟进记录，关系几乎从零开始"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c17-s7-b1","items":["🔴 年度 O-ring 需求量","🔴 三个基地各自的采购归口","🔴 跟进状态与最近跟进日期。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c17-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","其他","型号 AS568A-009，材质 VITON(7575) 下单 100EA（8.13）","跟进到货计划"]]},{"k":"source","id":"c17-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"17","name":"杭州富昌","tier":"B","tierTag":"信息为零","type":"机加件","cluster":"E 其他","priority":"暂缓","status":"进行中","lastFollow":"2026-08-14","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c18-s1-b1","text":"**只有「机加件 + 密封圈 + 胡小姐」三个信息点的客户。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c18-s2-b1","items":["**核心业务（精简）**：台账仅有客户类型（机加件）与需求产品（密封圈），无公司简介、无用量、无联系人职位信息。唯一联系人为胡小姐。","🌐 **规模与扩产**：—","🌐 **机台与制程**：—","**客户类型 / 集群**：机加件 / E 其他"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c18-s3-b1","head":["项目","内容"],"rows":[["需求产品","密封圈"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c18-s3-b2","text":"**商业价值判断**：无法判断值不值得投入，任何资源投放都是赌。先用一次电话把公司做什么、年用量、决策人问清楚，再决定去留。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c18-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["胡小姐","—","未标注","在职","—","—","仅有称呼，无全名"]]},{"k":"quote","id":"c18-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c18-s5-b1","items":["信息严重不足，无法评估。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c18-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c18-s6-b2","items":["补齐基本信息后再判断是否值得投入。"]},{"k":"p","id":"c18-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c18-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["电话访谈胡小姐：主营产品、年用密封圈量、现用品牌、决策人","席健","1 页客户档案（含去留建议）","2 周内","仅有姓氏，缺职位与决策信息"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c18-s7-b1","items":["🔴 公司简介、用量、forecast、联系人全名与职位、采购决策链。"]},{"k":"source","id":"c18-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"18","name":"深圳鹏进","tier":"B","tierTag":"验证通道","type":"FAB","cluster":"C 中试/科研平台","priority":"P2","status":"进行中","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":0,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c19-s1-b1","text":"**9500㎡、400+ 台设备的 8 寸 SiC/GaN 中试平台，量小但能出验证报告。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c19-s2-b1","items":["**核心业务（精简）**：第三代半导体中试 Fab 平台，2022 年注册、2024 年 11 月通线。洁净间 9500㎡，配置 400+ 台工艺与检测设备，大湾区 SiC/GaN 特色中试平台，与平湖实验室协同共建。业务覆盖衬底、外延、晶圆流片、封装、测试、失效分析一体化中试代工。面向新能源汽车、电网储能、轨道交通、数据中心供电、特种装备。定位为工艺验证、样品开发与小批量，非大规模量产线。","🌐 **规模与扩产**：中试平台，非量产线 → 用量小、按项目走。价值在于验证背书，不在于量。","🌐 **机台与制程**：8 英寸 SiC/GaN 中试线；全流程（外延、刻蚀、薄膜、离子注入、清洗、测试）。","**客户类型 / 集群**：FAB / C 中试/科研平台"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c19-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c19-s3-b2","text":"**商业价值判断**：中试线不追产量，追的是「国产料在这条线上跑通」的背书，这对我们打其他 SiC 客户是硬通货。把它当验证资源用，别用销量 KPI 衡量。"}]},{"title":"四、关键联系人（0 人）","blocks":[{"k":"p","id":"c19-s4-b1","text":"🔴 **台账无任何联系人**——这是本客户最大的空白，先补人再谈业务。"}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c19-s5-b1","items":["台账无用量、无 forecast、无联系人职位、无跟进内容。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c19-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c19-s6-b2","items":["当作国产料验证通道使用，帮我们出验证报告，而非追求出货量。"]},{"k":"p","id":"c19-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c19-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["提出联合验证方案，明确报告可用于对外背书的使用边界","技术 + 席健","中试验证方案 + 报告出具时间表","1 个月内","台账无对接人职位，需先确认工艺负责人"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c19-s7-b1","items":["🔴 年度用量","🔴 设备清单（是否有可用氟化液的机台）","🔴 对接人。"]},{"k":"source","id":"c19-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"19","name":"广州粤芯","tier":"A","tierTag":"高天花板·零起步","type":"FAB","cluster":"B 晶圆厂","priority":"P1","status":"进行中","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":0,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c20-s1-b1","text":"**刚上市、市值 1295 亿、四期 4 万片/月在建的华南唯一 12 寸代工厂，台账全空白。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c20-s2-b1","items":["**核心业务（精简）**：华南首家量产 12 英寸晶圆代工的特色工艺 Foundry，俗称「广州第一芯」。2017 年落地知识城，2019 年一期投产，目前一至三期运行、四期在建。现有月产能 6.33 万片 12 寸，三期 + 四期建成后总规划 12 万片/月。制程 55nm~180nm，平台含 PMIC、CIS、指纹、RFSOI、MCU、功率器件，以及国内少数可量产的 12 寸硅光。下游为汽车电子、工业控制、消费电子、AI 光互连。","🌐 **规模与扩产**：2026 年 10 月 13 日深交所创业板上市，发行价 12.01 元，开盘 +274.69% 至 45.00 元，总市值 1295 亿元。四期项目 2026 年 1 月启动建设，规划月产能 4 万片。营收 2023 年 10.44 亿 → 2024 年 16.81 亿 → 2025 年 25.82 亿。客户 200+，国内前十大模拟芯片上市公司中 80% 与其合作。","🌐 **机台与制程**：12 英寸；180nm-55nm 成熟特色，同步研发 28/22nm；正在推进 NPO、65nm 硅光、CPO。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c20-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","🔴待补充（台账完全空白）"],["Forecast / 年需求","中性增量 +100~150 桶（四期初装）"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认（新线，初装为主）"],["SRM","无"]]},{"k":"callout","id":"c20-s3-b2","text":"**商业价值判断**：现有 6.33 万片/月、四期建成后 12 万片/月，新线初装是确定性机会；IPO 募资到位意味着资本开支不会停。但台账无联系人、无用量、无跟进，等于零起步，先找人比先报价重要得多。"}]},{"title":"四、关键联系人（0 人）","blocks":[{"k":"p","id":"c20-s4-b1","text":"🔴 **台账无任何联系人**——这是本客户最大的空白，先补人再谈业务。"}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c20-s5-b1","items":["台账无用量、无 forecast、无联系人、无跟进——纯空白客户，但天花板高","IPO 募资到位 + 四期新建 = 全新产线初装窗口。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c20-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P1","卡住四期新线初装窗口","四期立项阶段介入，找设备/厂务选型负责人","🔴台账无联系人，需从零建立","选型负责人名单 + 机台清单 + baseline 物料","1 个月内","完全空白客户，无联系人"]]},{"k":"p","id":"c20-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c20-s6-b3","items":["四期新线立项阶段就介入","找设备/厂务选型负责人（台账无联系人，这是最大缺口）。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c20-s7-b1","items":["🔴 四期设备与厂务选型负责人","🔴 机台清单","🔴 现有冷却介质 baseline。"]},{"k":"p","id":"c20-s7-b2","text":"**跨客户共性待确认（与本客户相关）**："},{"k":"ul","id":"c20-s7-b3","items":["[客户侧] 四期设备与厂务选型负责人是谁？台账无联系人 → 影响：卡住 4 万片/月新建线的初装窗口；核实对象：待开发"]},{"k":"source","id":"c20-s7-b4","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"20","name":"杭州立昂微","tier":"B","tierTag":"产品风险优先","type":"8寸厂","cluster":"B 晶圆厂","priority":"⚠️先止损","status":"进行中","lastFollow":"2026-08-14","cutoff":"2026-11-02","contacts":4,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c21-s1-b1","text":"**ESC 被腐蚀、客户要解释的 6/8/12 寸一体化 Fab——这不是商机，是事故。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c21-s2-b1","items":["**核心业务（精简）**：IDM 一体化 Fab 平台，国内少有同时覆盖半导体硅材料与芯片制造的垂直一体化企业。2002 年成立、2020 年 A 股上市，员工 3800+，布局杭州、衢州、嘉兴、海宁、宁波多基地。产品含 6/8/12 英寸硅抛光片与外延片（金瑞泓）、6 寸 MOS/SBD/FRD/IGBT 功率芯片、6 寸 GaAs 砷化镓与 VCSEL 光芯片（立昂东芯）。应用为汽车电子、光伏储能、通信、消费电子、激光雷达。","🌐 **规模与扩产**：同步推进 12 寸硅片、6 寸 GaAs 射频产线扩产。","🌐 **机台与制程**：6/8/12 寸硅片 + 6 寸功率 + 6 寸 GaAs 射频。","**客户类型 / 集群**：8寸厂 / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c21-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","🔴待补充（早期方案为买满 25 桶送 4 桶）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c21-s3-b2","text":"**商业价值判断**：现场已损坏一个 ESC 及其他备件，王贞程要求给出解释，上门解释未果。书面结论出来之前谈任何新单都会放大风险；这类事故还会通过工程师圈子扩散，影响不止这一家。"}]},{"title":"四、关键联系人（4 人）","blocks":[{"k":"table","id":"c21-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["陈德兴","采购","采购","在职","—","—","—"],["杨良国","—","未标注","在职","—","—","职位空白"],["蚀刻 闫飞","—","技术/使用","在职","—","—","职位表述不规范"],["王贞程","—","未标注","在职","—","—","⚠️ ESC 腐蚀事故反馈人，需优先对接"]]},{"k":"quote","id":"c21-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c21-s5-b1","items":["⚠️ 质量事故未闭环：机台腐蚀问题上门解释未果，王贞程反馈现场已损坏一个 ESC 及其他备件，要求给出解释。这不是销售机会，是产品风险。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c21-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⚠️ 先止损","质量事故闭环优先于生意","先出 ESC 腐蚀书面解释与解决方案，再谈生意","王贞程 / 陈德兴（采购）（需徐总协助约访）","书面解释报告 + 解决方案","1 周内出书面材料","已损坏 1 个 ESC 及备件，未闭环"]]},{"k":"p","id":"c21-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c21-s6-b3","items":["先出 ESC 腐蚀问题的书面解释与解决方案","再约王经理带方案讨论","需徐总协助联系拜访。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c21-s7-b1","items":["🔴 腐蚀问题的最终结论是否指向我方产品","🔴 涉及赔偿金额","🔴 剩余库存处理方式。"]},{"k":"p","id":"c21-s7-b2","text":"**跨客户共性待确认（与本客户相关）**："},{"k":"ul","id":"c21-s7-b3","items":["[客户侧] ESC 损坏的腐蚀问题，最终结论是否指向我们的产品？ → 影响：涉及产品风险与赔偿；核实对象：王贞程"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c21-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","其他","就机台腐蚀问题上门做过解释未果，王贞程反馈现场损坏了一个 ESC 和其他备件，需要给出解释","⚠️ 需徐总协助联系拜访跟进，带方案讨论"]]},{"k":"source","id":"c21-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"21","name":"Epic","tier":"B","tierTag":"出口小单","type":"代理出口","cluster":"D 贸易/代采渠道","priority":"P2","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c22-s1-b1","text":"**新加坡 chiller 维修翻新商，需要 -70~130℃ 超宽温域氟化液。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c22-s2-b1","items":["**核心业务（精简）**：半导体设备备件维修、翻新服务商，无晶圆 Fab 产线。新加坡总部，马来西亚吉打设有维修翻新车间。主营 Chiller 温控单元、Heater Block 加热块、DI 过滤器、管路组件、流体部件的维修翻新。客户为 Micron、X-Fab 等海外 Fab。团队不大，聚焦温控、流体类备件维保，与我们的密封件、流体管路赛道高度对口。","🌐 **规模与扩产**：—","🌐 **机台与制程**：Chiller 温控单元维修翻新；寻源 -70~130℃ 超宽温域氟化液。","**客户类型 / 集群**：代理出口 / D 贸易/代采渠道"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c22-s3-b1","head":["项目","内容"],"rows":[["需求产品","氟化液"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","超宽温域（-70~130℃）"],["SRM","无"]]},{"k":"callout","id":"c22-s3-b2","text":"**商业价值判断**：量不大但现金结算、决策链短，是低成本试水海外渠道的机会。前提是先确认我方产品温域能否覆盖，答不上来就没有下一步。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c22-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["Eugene Yilin","—","未标注","在职","—","sales@epictechnology.sg","只有公共邮箱"]]},{"k":"quote","id":"c22-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c22-s5-b1","items":["台账无用量、无 forecast","需求为超宽温域，需确认我方产品是否达标。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c22-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c22-s6-b2","items":["确认 LC-110/JD-7076 温域是否覆盖 -70~130℃","接到订单后联系郑秀华安排生产、报关装船。"]},{"k":"p","id":"c22-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c22-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["技术确认 LC-110/JD-7076 温域是否覆盖 -70~130℃，并出具参数对照表","技术支持 + 郑秀华","温域参数对照表（可否供货结论）","1 周内","我方超宽温域产品参数未内部确认"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c22-s7-b1","items":["🔴 温域技术参数","🔴 年度 forecast","🔴 目标海外 Fab 的 baseline 物料。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c22-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-08-14","微信","—","联系尤金了解 forecast"],["2026-09-28","微信","寻源 -70~130℃ 的氟化液，徐总在对接技术要求","—"]]},{"k":"source","id":"c22-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"22","name":"上海集天","tier":"C","tierTag":"信息极少","type":"中间商","cluster":"D 贸易/代采渠道","priority":"暂缓","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":2,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c23-s1-b1","text":"**只有两个人名和一个料号的中间商。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c23-s2-b1","items":["**核心业务（精简）**：中间商，需求 ORAR00388-JPF10。台账无公司简介、无用量、无跟进内容。联系人为张经理（采购）、孔令东（采购）。","🌐 **规模与扩产**：—","🌐 **机台与制程**：—","**客户类型 / 集群**：中间商 / D 贸易/代采渠道"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c23-s3-b1","head":["项目","内容"],"rows":[["需求产品","ORAR00388-JPF10"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c23-s3-b2","text":"**商业价值判断**：无法评估，先确认需求是否还存在；若无，直接归档，不再占用跟进精力。"}]},{"title":"四、关键联系人（2 人）","blocks":[{"k":"table","id":"c23-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["张经理","采购","采购","在职","—","—","—"],["孔令东","采购","采购","在职","—","—","—"]]},{"k":"quote","id":"c23-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c23-s5-b1","items":["信息极少，无法评估。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c23-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⏸ 暂缓","维持最低接触","微型贸易商或通道退化，不值得投入资源","姚晏宁 / 温跃东 / 张经理、孔令东 / howrad","—","按需","注册资本 10-30 万，曦鸣联系人已离职"]]},{"k":"p","id":"c23-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c23-s6-b3","items":["确认是否仍有实际需求，无则暂缓。"]},{"k":"p","id":"c23-s6-b4","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c23-s6-b5","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["向张经理确认 ORAR00388-JPF10 需求是否仍在、终端是谁","席健","需求存亡结论（继续/归档）","2 周内","无简介、无用量、无跟进记录"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c23-s7-b1","items":["🔴 公司简介","🔴 需求量","🔴 终端客户是谁。"]},{"k":"source","id":"c23-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"23","name":"宁波江丰电子","tier":"A","tierTag":"交付失信","type":"机械模具生产（拓荆）","cluster":"A 设备厂","priority":"P2","status":"待启动","lastFollow":"2026-10-27","cutoff":"2026-11-02","contacts":2,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c24-s1-b1","text":"**上半年 27.37 亿、零部件月交付超 2 亿的材料+零部件双龙头，我们却有一笔款已付未交付。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c24-s2-b1","items":["**核心业务（精简）**：半导体材料 + 精密零部件厂商，国内超高纯金属溅射靶材龙头，2017 年创业板上市，员工 4800+。靶材含铝、钛、钽、铜、钨钛等及配套背板/环件，用于 PVD 薄膜沉积，供货中芯、台积电等头部晶圆厂；近年大力拓展精密零部件业务（静电吸盘、金属/陶瓷腔体零部件、内衬、真空配套件），适配刻蚀、PVD、CVD、离子注入设备。上游是沈阳富创。","🌐 **规模与扩产**：2026 上半年营收 27.37 亿（+30.68%），归母净利 5.4 亿（+113.61%）。零部件单月交付收入已超 2 亿元/月；静电卡盘 2026 年收入保守 7 亿元+；定增 19.28 亿扩产静电吸盘与靶材（新增 5100 个 ESC 年产能），9 月 29 日子公司晶磐电子下线首枚自研 ESC。机构测算 2026 全年 55-60 亿（靶材 35 亿 + 零部件 20 亿）。","🌐 **机台与制程**：溅射靶材 + 静电吸盘 ESC + 腔体零部件；PVD/CVD/刻蚀/离子注入适配。","**客户类型 / 集群**：机械模具生产（拓荆） / A 设备厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c24-s3-b1","head":["项目","内容"],"rows":[["需求产品","O-RING"],["台账累计用量","26 条（11,555.31 元）"],["Forecast / 年需求","🔴待补充"],["实测成交金额","11,555.31 元"],["实测单价","445 元/条"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c24-s3-b2","text":"**商业价值判断**：客户盘子正在翻倍（ESC 定增 19.28 亿、新增 5100 个年产能），O-ring 需求同步上涨；而 4500024420 款已付、10 月 27 日还在追交期。在客户扩张期交付失信，等于主动把份额让给对手，这一单必须本周闭环。"}]},{"title":"四、关键联系人（2 人）","blocks":[{"k":"table","id":"c24-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["张涛","采购","采购","在职","—","—","4500024420 交期跟进人"],["刘俊","工程师","技术/使用","在职","—","—","—"]]},{"k":"quote","id":"c24-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c24-s5-b1","items":["⚠️ 最容易丢单的地方：4500024420 订单未交付但款已付，10 月 27 日仍在跟进物料交期。江丰自己正在建 ESC 产线、零部件盘子翻倍，O-ring 需求在涨，我们却在拖交期。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c24-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","先解决款已付未交付","立即处理 4500024420，再借其零部件翻倍争取份额","张涛（采购）/ 刘俊（工程师）","4500024420 交付 + 交期根因说明","本周内","款已付未交付，存在交期失信风险"]]},{"k":"p","id":"c24-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c24-s6-b3","items":["立即解决 4500024420 款已付未交付问题","借其零部件翻倍争取配套份额","补全采购对接人（现仅张涛、刘俊）。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c24-s7-b1","items":["🔴 4500024420 的交期根因","🔴 年度 O-ring 需求量","🔴 是否有更多采购/技术对接人。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c24-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-10-07","其他","—","节前合同因对公账户问题需重新盖章回传"],["2026-10-27","微信","4500024420 订单未交付，款已付","⚠️ 跟进物料交期"]]},{"k":"source","id":"c24-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"24","name":"中电科13所","tier":"B","tierTag":"欠款小额","type":"FAB","cluster":"C 中试/科研平台","priority":"⚠️先止损","status":"待启动","lastFollow":"2026-10-21","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c25-s1-b1","text":"**7 月开票 1 桶、10 月还挂账的军工科研院所。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c25-s2-b1","items":["**核心业务（精简）**：科研型 IDM，1956 年北京筹建、1963 年迁石家庄，国内微波射频、第三代半导体、MEMS、光电子老牌核心研制基地。员工约 7000 人，下设多条工艺线，控股国基北方、中瓷电子等产业化公司。产品含微波毫米波射频芯片（GaAs/GaN/InP/SiGe）、宽禁带功率器件（SiC MOSFET、GaN）、光电子（激光器、探测器、光芯片）、MEMS（陀螺仪、加速度计、射频 MEMS）。有 GaAs、GaN、SiC、硅基、磷化铟多条 6 寸特色工艺研制线。以高可靠军工/航天为主、民品配套为辅，研制验证 + 小批量供货，非商用量产 Foundry。","🌐 **规模与扩产**：—","🌐 **机台与制程**：6 寸特色工艺研制线（GaAs/GaN/SiC/Si/InP）；以研制验证、小批量为主。","**客户类型 / 集群**：FAB / C 中试/科研平台"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c25-s3-b1","head":["项目","内容"],"rows":[["需求产品","氟化液"],["台账累计用量","1 桶 LC-230"],["Forecast / 年需求","🔴待补充（「等硅油堵才会有机会灌机测试」）"],["实测成交金额","🔴待补充（台账未记金额）"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c25-s3-b2","text":"**商业价值判断**：单量极小、场景还没打开（要等硅油堵才有机会灌机测试），加上超账期，投入产出比很差。回款前不追加资源，回款后也只维持最低接触。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c25-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["张健","采购","采购","在职","—","—","超账期挂账的对接人"]]},{"k":"quote","id":"c25-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c25-s5-b1","items":["7 月 13 日开票 1 桶 LC-230 超账期未付款，10 月 28 日查看仍挂账","单量极小。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c25-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⚠️ 先止损","超账期挂账","1 桶 LC-230 超账期未付，下月初对账日再查","张健（采购）","对账结果 + 回款","下月初","回款风险优先于增量"]]},{"k":"p","id":"c25-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c25-s6-b3","items":["下月初再查看询问、对账","回款前不做新增投入。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c25-s7-b1","items":["🔴 超账期原因","🔴 对账日","🔴 是否有后续灌机测试机会。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c25-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-10-21","微信","催过款，10.28 查看还是挂账","⚠️ 下月初再查看询问，对账日"]]},{"k":"source","id":"c25-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"25","name":"中电科24/44所","tier":"A","tierTag":"一份资质四个主体","type":"8寸厂","cluster":"C 中试/科研平台","priority":"P2","status":"进行中","lastFollow":"2026-10-28","cutoff":"2026-11-02","contacts":4,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c26-s1-b1","text":"**一份备案协议可覆盖电科芯片本部、24 所、26 所、44 所四个主体。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c26-s2-b1","items":["**核心业务（精简）**：科研型 IDM，自有 6 寸特色工艺产线，自研 + 晶圆制造 + 封装 + 组件，不对外商业化接单代工。24 所主打模拟/混合信号 IC：高精度 ADC/DAC、运算放大器、基准源、射频模拟、电源管理、混合微电路模块，含 Bipolar、CMOS、BCD、SOI 等特种工艺。44 所主打光电子：CCD/CMOS 图像传感器、InGaAs/APD 光电探测器、激光二极管、光耦、光电集成芯片。以军工、航天高可靠产品研制与小批量供货为主。","🌐 **规模与扩产**：🔴 被低估的一单：已有备案协议可适用于电科芯片本部、24 所、26 所、44 所四个主体。","🌐 **机台与制程**：6 寸模拟专用工艺线（24 所）+ 光芯片/探测器工艺线（44 所）。","**客户类型 / 集群**：8寸厂 / C 中试/科研平台"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c26-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","10 桶 LC-110（买 5 桶送 5 桶）"],["Forecast / 年需求","中性增量 +10~20 桶"],["实测成交金额","🔴待补充（台账未记金额）"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c26-s3-b2","text":"**商业价值判断**：10 桶（买 5 送 5）只是试水，真正的价值是备案能横向复制到同体系其他主体，尤其 26 所完全没开发。典型的「一份资质、四个客户」，扩张成本极低。"}]},{"title":"四、关键联系人（4 人）","blocks":[{"k":"table","id":"c26-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["吴磊","采购","采购","在职","13527434927","—","—"],["向奇刚","采购","采购","在职","15730099875","—","—"],["刘李欢","设备主任工程师","技术/使用","在职","微信","—","—"],["旷运中","ET","技术/使用","**已离职**","微信","—","新单位重庆奕能"]]},{"k":"quote","id":"c26-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c26-s5-b1","items":["旷运中（ET）已离职，新单位重庆奕能","26 所尚未开发。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c26-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","用备案协议横向扩到 26 所","一单覆盖电科芯片本部、24 所、26 所、44 所四个主体","向奇刚（采购）/ 吴磊（采购）/ 刘李欢（设备主任）","26 所对接人 + 实际用量与 forecast","2 个月内","旷运中已离职"]]},{"k":"p","id":"c26-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c26-s6-b3","items":["用已有备案协议横向扩到 26 所","跟进 LC-110 实际用量与 forecast，顺带摸其他零配件需求","拜访 24 所与重庆渝芯。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c26-s7-b1","items":["🔴 实际用量与 forecast","🔴 26 所对接人","🔴 其他零配件需求清单。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c26-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-10-07","其他","—","拜访 24 所和重庆渝芯"],["2026-10-28","微信","跟进 LC-110 的实际用量和 forecast，另外是其他零配件需求","—"]]},{"k":"source","id":"c26-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"26","name":"北京中硅泰克","tier":"B","tierTag":"决策链短","type":"🔴待补充","cluster":"A 设备厂","priority":"P2","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c27-s1-b1","text":"**30 余人、专做刻蚀机 ESC 的小厂，被北方华创推荐过来。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c27-s2-b1","items":["**核心业务（精简）**：半导体设备零部件厂商，无晶圆 Fab 产线。核心产品为刻蚀机静电卡盘（ESC），配套陶瓷绝缘件与精密陶瓷结构件，日本设有研发子公司（会津精密技术研究所）。工艺方向含陶瓷喷涂、精密机加工、表面绝缘涂层、等离子体适配精密件。客户为北方华创、长江存储等。员工 30 余人，聚焦等离子刻蚀设备核心静电卡盘国产化。","🌐 **规模与扩产**：30 余人的小公司意味着决策链短，一人可拍板——低成本突破点。","🌐 **机台与制程**：刻蚀机 ESC + 陶瓷结构件；与刻蚀腔体、真空、密封部件强相关。","**客户类型 / 集群**：🔴待补充 / A 设备厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c27-s3-b1","head":["项目","内容"],"rows":[["需求产品","JD-7076"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c27-s3-b2","text":"**商业价值判断**：人少意味着一次拜访能见到拍板的人，JD-7076 送样成本也低；它做的是刻蚀腔体核心件，与密封/冷却品类天然相关。用华创的背书约见，是最省力的打开方式。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c27-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["王经理","—","未标注","在职","群微信","—","仅有微信群，无姓名与电话"]]},{"k":"quote","id":"c27-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c27-s5-b1","items":["台账客户类型空白","仅「华创推荐客户」一条记录，联系人只有王经理（微信群）。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c27-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c27-s6-b2","items":["借华创推荐背书直接约见王经理，推动 JD-7076 送样。"]},{"k":"p","id":"c27-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c27-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["以「北方华创推荐」为由约见王经理，带 JD-7076 样品与技术资料","席健","拜访纪要 + 送样确认（或明确不需要）","2 周内","仅有微信联系人，无正式渠道"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c27-s7-b1","items":["🔴 客户类型","🔴 需求规模","🔴 王经理全名与职位","🔴 决策链。"]},{"k":"source","id":"c27-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"27","name":"中芯国际(北京)","tier":"B","tierTag":"供应商重排窗口","type":"FAB","cluster":"B 晶圆厂","priority":"P2","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":4,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c28-s1-b1","text":"**两条 12 寸 7 万片的 28nm 大厂，我们要卖的是 BRUSH 不是主力品类。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c28-s2-b1","items":["**核心业务（精简）**：中芯国际北京二期，商业化量产 Foundry，两条 12 英寸产线合计月产能 7 万片（3.5 万片/条）。工艺节点 65nm、40nm、28nm，同时拥有 28nm PolySiON 与 HKMG 高 k 金属栅工艺平台。平台含通用逻辑、低功耗逻辑、CIS 图像传感器、高压驱动、射频、嵌入式存储。下游为 MCU、无线连接、电源管理、车载、消费类芯片。","🌐 **规模与扩产**：2026 年 6 月中芯北方 49% 股权收购完成过户，实现全资控股 → 采购决策权集中，可能重排供应商。","🌐 **机台与制程**：12 英寸 ×2；65/40/28nm，含 HKMG。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c28-s3-b1","head":["项目","内容"],"rows":[["需求产品","BRUSH"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c28-s3-b2","text":"**商业价值判断**：2026 年 6 月中芯北方 49% 股权收购完成、实现全资控股，采购决策权集中，正是供应商重排的窗口。BRUSH 本身价值有限，但它是进入这座厂的敲门砖，谈的时候要顺势带出氟化液与 O-ring。"}]},{"title":"四、关键联系人（4 人）","blocks":[{"k":"table","id":"c28-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["张然","经理","决策层","在职","—","—","—"],["全志丰","工程师","技术/使用","在职","—","—","—"],["李子维","蚀刻工程师","技术/使用","在职","—","—","—"],["孙鹏","—","未标注","在职","—","—","职位空白"]]},{"k":"quote","id":"c28-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c28-s5-b1","items":["需求产品为 BRUSH（非我方主力），台账无用量、无跟进状态。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c28-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c28-s6-b2","items":["借全资控股后供应商重排的窗口摸需求","找张然（经理）/全志丰（BRUSH）对接。"]},{"k":"p","id":"c28-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c28-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["以 BRUSH 切入约见张然，同步提交氟化液/O-ring 品类资料","席健 / 全志丰","拜访纪要 + 双品类需求摸底","1 个月内","台账无用量、无跟进状态"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c28-s7-b1","items":["🔴 BRUSH 需求规模与现用品牌","🔴 是否同时有氟化液/O-ring 需求。"]},{"k":"source","id":"c28-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"28","name":"之江实验室","tier":"C","tierTag":"暂缓","type":"实验室","cluster":"C 中试/科研平台","priority":"暂缓","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c29-s1-b1","text":"**微纳加工公共平台，需求真实存在但量极小、周期极长。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c29-s2-b1","items":["**核心业务（精简）**：浙江省政府主导、浙大与阿里巴巴共同参与的新型研发机构，拥有微纳加工公共平台（MEMS、集成光电子、先进封装试制线）。微纳平台面向科研试制、工艺开发与样品加工，能力含薄膜、刻蚀、光刻、沉积、清洗、键合、先进封装。以智能计算、智能感知为主线，承接国家级/省级科研任务与产学研联合工艺验证。不做大规模商业化流片代工。","🌐 **规模与扩产**：科研试制，量极小。","🌐 **机台与制程**：微纳加工平台（小试样机、MEMS、光芯片、传感器工艺研发）。","**客户类型 / 集群**：实验室 / C 中试/科研平台"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c29-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c29-s3-b2","text":"**商业价值判断**：科研采购是项目制，一单几桶、决策慢，投入产出不成比例。维持最低接触，等它有大项目再说。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c29-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["陈勇","工程师","技术/使用","在职","—","—","—"]]},{"k":"quote","id":"c29-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c29-s5-b1","items":["需求真实性偏弱，量小周期长。仅陈勇（工程师）一个联系人。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c29-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⏸ 暂缓","维持最低接触","乌镇实验室无前道工艺线，需求真实性需现场核实","陈勇 / 杨总","需求真实性核实","按需","量小、需求存疑"]]},{"k":"p","id":"c29-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c29-s6-b3","items":["维持最低接触，不投入资源。"]},{"k":"p","id":"c29-s6-b4","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c29-s6-b5","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["季度一次问候，不再安排专门出差","席健","—（仅维护联系人）","每季度","无量、无预算周期"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c29-s7-b1","items":["🔴 年度用量","🔴 使用场景","🔴 是否值得继续。"]},{"k":"source","id":"c29-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"29","name":"乌镇实验室","tier":"C","tierTag":"需求存疑","type":"实验室","cluster":"C 中试/科研平台","priority":"暂缓","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c30-s1-b1","text":"**做陶瓷与超材料中试、没有前道工艺线，却挂着 LC-110 的需求。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c30-s2-b1","items":["**核心业务（精简）**：先进功能陶瓷、超材料、复合材料、空天材料中试平台 + 材料共享检测平台，建有新型陶瓷材料中试平台（工信部重点培育）。偏向粉体、烧结、成型与材料表征，服务半导体封装陶瓷基板、射频器件配套材料研发。业务含电子陶瓷、高频材料、耐高温介质薄膜、空天结构材料、压电材料。","🌐 **规模与扩产**：⚠️ 该平台明确无光刻、刻蚀、薄膜沉积等芯片制造工艺线 → 台账需求 LC-110 的真实性存疑。","🌐 **机台与制程**：陶瓷/新材料中试、材料制备、性能测试、失效分析；无芯片制造工艺线。","**客户类型 / 集群**：实验室 / C 中试/科研平台"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c30-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴存疑"],["SRM","无"]]},{"k":"callout","id":"c30-s3-b2","text":"**商业价值判断**：没有刻蚀、薄膜、光刻线，氟化液用在哪说不通，很可能是录入错误或转手他人。先核实使用环节，核实不成立就归档，别让假需求占 forecast。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c30-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["杨总","—","决策层","在职","—","—","—"]]},{"k":"quote","id":"c30-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c30-s5-b1","items":["需求真实性存疑，需现场核实 LC-110 用在哪个环节。仅杨总一个联系人。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c30-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⏸ 暂缓","维持最低接触","乌镇实验室无前道工艺线，需求真实性需现场核实","陈勇 / 杨总","需求真实性核实","按需","量小、需求存疑"]]},{"k":"p","id":"c30-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c30-s6-b3","items":["现场核实需求真实性，无实质需求则暂缓。"]},{"k":"p","id":"c30-s6-b4","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c30-s6-b5","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["现场或电话核实 LC-110 用在哪个环节、由谁使用","席健","需求真伪结论（成立则立项，不成立归档）","1 个月内","平台无前道工艺线，需求逻辑不成立"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c30-s7-b1","items":["🔴 LC-110 的具体使用场景","🔴 联系人全名与职位。"]},{"k":"p","id":"c30-s7-b2","text":"**跨客户共性待确认（与本客户相关）**："},{"k":"ul","id":"c30-s7-b3","items":["[客户侧] 需求 LC-110 的真实性——该平台明确无前道工艺线，用在哪个环节？ → 影响：可能是假需求；核实对象：杨总"]},{"k":"source","id":"c30-s7-b4","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"30","name":"上海昆仑焱","tier":"C","tierTag":"微型贸易","type":"🔴待补充","cluster":"D 贸易/代采渠道","priority":"暂缓","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c31-s1-b1","text":"**注册资本 10 万元的单人贸易公司。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c31-s2-b1","items":["**核心业务（精简）**：半导体设备/耗材贸易与设备维保服务商，经营范围含半导体专用设备、橡胶制品（密封件）、元器件销售，附带设备维修与进出口代理。注册资本 10 万元，单人独资初创商贸公司，无自有洁净车间与加工能力。","🌐 **规模与扩产**：微型贸易商，优先级最低。","🌐 **机台与制程**：—","**客户类型 / 集群**：🔴待补充 / D 贸易/代采渠道"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c31-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c31-s3-b2","text":"**商业价值判断**：履约与回款能力都弱，只做现款现货，不做账期；不值得配置任何主动资源。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c31-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["姚晏宁","—","未标注","在职","18657934311","—","职位空白"]]},{"k":"quote","id":"c31-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c31-s5-b1","items":["注册资本仅 10 万元的单人公司，履约与回款能力弱。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c31-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⏸ 暂缓","维持最低接触","微型贸易商或通道退化，不值得投入资源","姚晏宁 / 温跃东 / 张经理、孔令东 / howrad","—","按需","注册资本 10-30 万，曦鸣联系人已离职"]]},{"k":"p","id":"c31-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c31-s6-b3","items":["维持最低接触，先款后货。"]},{"k":"p","id":"c31-s6-b4","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c31-s6-b5","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["明确现款现货政策并书面告知","财务 + 席健","报价单（现款现货条款）","本月内","注册资本 10 万，无履约保障"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c31-s7-b1","items":["🔴 客户类型","🔴 实际需求与终端","🔴 联系人姚晏宁的职位。"]},{"k":"source","id":"c31-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"31","name":"卓胜微","tier":"B","tierTag":"价格战守份额","type":"FAB","cluster":"B 晶圆厂","priority":"P2","status":"进行中","lastFollow":"2026-10-23","cutoff":"2026-11-02","contacts":6,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c33-s1-b1","text":"**射频前端龙头，正从 Fabless 转 Fab-Lite，年度议价与 brush 转单同时压过来。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c33-s2-b1","items":["**核心业务（精简）**：江苏卓胜微电子（Maxscend，300782），2012 年成立、2019 年创业板上市，总部无锡，射频前端芯片龙头。主营射频开关/LNA/SAW 滤波器/PA/射频模组（L-PAMiD、LFEM、DiFEM）及蓝牙 MCU。工艺平台含 RF SOI、IPD、SiGe、GaAs、SAW 压电、BCD。正从 Fabless 转向 Fab-Lite，自建产线主体为全资子公司无锡芯卓湖光半导体（6 寸 SAW 产线、12 寸 SOI/IPD 产线均已量产），产能优先供给自家产品。海外对标 Qorvo、Skyworks、Murata。","🌐 **规模与扩产**：芯卓累计投入 94.21 亿元。截至 2026 年 6 月：6 寸滤波器产线月产能 1.5 万片，12 寸产线月产能 9000 片，产线设备国产化率整体超 50%，良率行业第一梯队。2026H1 营收 18.1 亿（+6.2%），归母 -3.71 亿（折旧压力，2025 年首次年度亏损）。国内首款全国产供应链 L-PAMiD 已量产并进入放量周期；战略向光互联/硅光延伸。","🌐 **机台与制程**：6 寸 SAW + 12 寸 SOI/IPD；设备国产化率 >50%。","**客户类型 / 集群**：FAB / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c33-s3-b1","head":["项目","内容"],"rows":[["需求产品","brush / LC-110"],["台账累计用量","5 桶"],["Forecast / 年需求","8 桶（中性增量 +5~10 桶）"],["实测成交金额","🔴待补充（台账未记金额）"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","有（账号密码按规范不写入本表）"]]},{"k":"callout","id":"c33-s3-b2","text":"**商业价值判断**：6 寸 1.5 万片/月、12 寸 9000 片/月、设备国产化率 >50%，是用国产料最积极的客户；但 2026H1 归母 -3.71 亿、折旧压力大，对价格极敏感，而 KTZ brush 后续已由康特瑞自己对接。守住份额的唯一办法是给实质让步，同时用 LC-110 换一个新品类的位置。"}]},{"title":"四、关键联系人（6 人）","blocks":[{"k":"table","id":"c33-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["蒋晓炜","采购","采购","在职","—","xiaowei.jiang@maxscend.com","—"],["邓家伟","brush 采购","采购","在职","17353763971","jiawei.deng@maxscend.com","—"],["徐远立","CMP","技术/使用","在职","—","—","—"],["王磊","CMP 经理","技术/使用","在职","—","—","—"],["徐虹","6 寸产线采购","采购","在职","18021559073","hong.xu@maxscend.com","—"],["刘金","国产化导入负责人","决策层","在职","—","—","国产化导入的关键决策人"]]},{"k":"quote","id":"c33-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c33-s5-b1","items":["KTZ brush 后续由康特瑞自己对接（这块要丢了）","72EA brush 交期未回复","年度议价中，折旧亏损 → 对降本敏感，议价无实质让步容易被切。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c33-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","守年度议价，别被切","折旧亏损 → 对降本敏感，年度议价给实质让步；回复 72EA brush 交期","蒋晓炜（采购）/ 刘金（国产化导入负责人）/ 邓家伟","年度议价方案 + 72EA 交期回复","2 周内","brush 已转给康特瑞对接"]]},{"k":"p","id":"c33-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c33-s6-b3","items":["年度议价给实质让步","回复 72EA brush 交期","线下拜访 + 问李博士交期。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c33-s7-b1","items":["🔴 年度议价底线","🔴 brush 是否彻底转给康特瑞","🔴 LC-110 使用场景。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c33-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-10-23","邮件","年度议价；72EA brush 交期回复","线下拜访；问李博士交期"]]},{"k":"source","id":"c33-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"32","name":"平湖市长三角","tier":"B","tierTag":"验证通道","type":"🔴待补充","cluster":"C 中试/科研平台","priority":"P2","status":"进行中","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":0,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c34-s1-b1","text":"**9500㎡、390 台套设备的 8 寸 SiC/GaN 开放中试平台。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c34-s2-b1","items":["**核心业务（精简）**：开放共享型 8 英寸 SiC/GaN 第三代半导体中试 Fab 平台，国内稀缺宽禁带公共工艺线，2024 年底正式通线。洁净间 9500㎡，设备 390 余台套，人员 600+，工信部重点培育中试平台、广东省集成电路中试平台。覆盖 SiC、GaN、氧化镓、金刚石（第四代半导体）研发与中试，含外延、刻蚀、薄膜、离子注入、清洗、测试全流程。中立公共平台，不做自有品牌芯片销售，收入来自工艺开发、流片服务、设备材料验证。","🌐 **规模与扩产**：可作为国产料验证通道，帮我们出报告。","🌐 **机台与制程**：8 英寸 SiC MOS、GaN HEMT、超宽禁带金刚石/氧化镓；全流程。","**客户类型 / 集群**：🔴待补充 / C 中试/科研平台"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c34-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c34-s3-b2","text":"**商业价值判断**：与鹏进同类，价值在验证背书不在销量；工信部重点培育平台出的报告，在别的客户那里更好用。目标是拿到一份盖章的国产料验证报告。"}]},{"title":"四、关键联系人（0 人）","blocks":[{"k":"p","id":"c34-s4-b1","text":"🔴 **台账无任何联系人**——这是本客户最大的空白，先补人再谈业务。"}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c34-s5-b1","items":["台账客户类型空白，无用量、无跟进状态、无最近跟进日期。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c34-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c34-s6-b2","items":["当作验证通道推进，争取出具国产料验证报告。"]},{"k":"p","id":"c34-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c34-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["提出国产料验证合作，明确报告可对外引用","技术 + 席健","验证方案 + 报告时间表","1 个月内","台账客户类型空白、无对接人"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c34-s7-b1","items":["🔴 客户类型","🔴 年度用量","🔴 对接人","🔴 跟进状态。"]},{"k":"source","id":"c34-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"33","name":"深圳市鹏新旭","tier":"A","tierTag":"体系组合拳","type":"🔴待补充","cluster":"B 晶圆厂","priority":"P2","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c35-s1-b1","text":"**深重投旗下 28/40nm 12 寸新厂，与新凯来、鹏进同属一个国资体系。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c35-s2-b1","items":["**核心业务（精简）**：深圳深重投旗下新建 12 寸成熟逻辑 Foundry，2022 年设立，大湾区重点成熟制程晶圆制造项目。主打 28nm/40nm 逻辑代工，服务华南 Fabless 设计公司。与深圳鹏进同属深重投集团体系（鹏进是 SiC/GaN 中试线，鹏新旭是硅基逻辑量产 Fab）。深圳国资同期还主导成立鹏芯微（先进制程）、升维旭（存储）。","🌐 **规模与扩产**：中芯/新凯来同为国资体系：新凯来设备大概率进鹏新旭/鹏芯微产线 → 同一体系内可打组合拳（设备端密封件认证反向带动厂务端氟化液导入）。","🌐 **机台与制程**：12 英寸；28nm/40nm 成熟逻辑。","**客户类型 / 集群**：🔴待补充 / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c35-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110"],["台账累计用量","🔴待补充"],["Forecast / 年需求","中性增量 +40~60 桶"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认（新线初装）"],["SRM","无"]]},{"k":"callout","id":"c35-s3-b2","text":"**商业价值判断**：新凯来的设备大概率进鹏新旭/鹏芯微产线，意味着设备端密封件认证可以反向带动厂务端氟化液导入——同一体系内打组合拳，比单点突破便宜。但台账只有一个采购联系人，厂务与设备选型人完全缺失。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c35-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["Freya.Chen","采购","采购","在职","189 2655 0716","Freya.Chen@pensun.com","唯一联系人"]]},{"k":"quote","id":"c35-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c35-s5-b1","items":["台账客户类型空白，无用量、无 forecast","仅有 Freya.Chen（采购）一个联系人。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c35-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c35-s6-b2","items":["借新凯来/深重投体系关系切入","找厂务与设备选型人。"]},{"k":"p","id":"c35-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c35-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["借新凯来/深重投体系关系，摸清厂务与设备选型负责人，并确认建设进度","席健 + 新凯来对接人","选型决策人名单 + 建设节点表","1 个月内","台账仅 1 名采购，无厂务/设备口径"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c35-s7-b1","items":["🔴 客户类型","🔴 用量","🔴 设备与厂务选型负责人。"]},{"k":"source","id":"c35-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"34","name":"烟台齐新半导体","tier":"B","tierTag":"区域小量","type":"🔴待补充","cluster":"C 中试/科研平台","priority":"暂缓","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c36-s1-b1","text":"**睿创微纳全资的 MEMS/红外中试+封装线，员工 120+。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c36-s2-b1","items":["**核心业务（精简）**：睿创微纳旗下核心器件平台，2021 年设立，原为睿创微纳 + 烟台业达国资合资，2026 年完成股权收购后睿创微纳全资控股。MEMS/红外传感器中试 + 先进封装产线，不是传统晶圆 Fab（无硅片前道晶圆制造线）。产线聚焦红外探测器、MEMS 传感器、三维异质集成微系统、光学传感器组件，含刻蚀、薄膜、封装、测试工艺。员工 120+，产线满产运行。","🌐 **规模与扩产**：规模小，有氟化液需求但量有限。","🌐 **机台与制程**：薄膜沉积、干法刻蚀、微加工、异质集成、先进封装、测试。","**客户类型 / 集群**：🔴待补充 / C 中试/科研平台"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c36-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","有（账号密码按规范不写入本表）"]]},{"k":"callout","id":"c36-s3-b2","text":"**商业价值判断**：有薄膜沉积、干法刻蚀工艺，氟化液有真实需求但量有限；适合作为山东区域的低成本覆盖点，不值得单独出差。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c36-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["刘志","—","未标注","在职","—","—","职位空白"]]},{"k":"quote","id":"c36-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c36-s5-b1","items":["台账客户类型空白，无用量、无跟进状态","仅刘志一个联系人。"]}]},{"title":"六、下一步行动","blocks":[{"k":"callout","id":"c36-s6-b1","text":"**台账既有动作**："},{"k":"ol","id":"c36-s6-b2","items":["确认是否有实质氟化液需求再决定投入。"]},{"k":"p","id":"c36-s6-b3","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c36-s6-b4","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["与刘志确认产线用液机台与年用量，纳入山东区域顺访计划","区域销售","用量摸底表 + 顺访安排","下次山东出差","台账无职位、无用量"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c36-s7-b1","items":["🔴 客户类型","🔴 用量","🔴 刘志的职位","🔴 使用场景。"]},{"k":"source","id":"c36-s7-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"35","name":"重庆万国","tier":"A","tierTag":"最高信息缺口","type":"🔴待补充","cluster":"B 晶圆厂","priority":"P2","status":"待启动","lastFollow":"🔴待补充","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c38-s1-b1","text":"**二期从 2 万片扩到 5 万片/月的 12 寸功率厂，我们连它在买什么都不知道。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c38-s2-b1","items":["**核心业务（精简）**：IDM 功率半导体 Fab，自研 + 12 寸晶圆制造 + 封装测试一体化，国内最早的 12 英寸功率器件产线之一。一期月产 2 万片 12 英寸功率晶圆，配套封装测试；二期规划扩产至月 5 万片。工艺为功率 MOS、超结 MOS、电源管理器件，BCD、高压功率工艺。产品含低压/中高压功率 MOSFET、整流器件。应用为消费电子、服务器电源、工业、汽车电子。早期为 AOS 与重庆国资合资，2025 年上海新微科技集团控股，保留少量 AOS 外资股份，可对外承接部分功率代工。","🌐 **规模与扩产**：二期 2 万 → 5 万片/月，+150% 产能 = 新机台初装窗口。","🌐 **机台与制程**：12 英寸功率；BCD、高压功率工艺。","**客户类型 / 集群**：🔴待补充 / B 晶圆厂"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c38-s3-b1","head":["项目","内容"],"rows":[["需求产品","🔴待补充（台账完全空白）"],["台账累计用量","🔴待补充"],["Forecast / 年需求","中性增量 +30~50 桶"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","🔴待确认"],["SRM","无"]]},{"k":"callout","id":"c38-s3-b2","text":"**商业价值判断**：需求产品栏完全空白、用量/forecast/跟进状态全空，只有一个钟经理；但扩产 +150% 意味着新机台初装是确定的。信息缺口最大 + 机会最确定，派一个人跑一趟的期望回报最高。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c38-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["钟经理","—","未标注","在职","—","—","唯一联系人，无全名与职位"]]},{"k":"quote","id":"c38-s4-b2","items":["⚠️ 该客户联系人均非决策层/选型决策人，关系停在执行层——这是份额上不去的结构性原因。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c38-s5-b1","items":["⚠️ 我们连它在买什么都不知道——需求产品栏完全空白，用量、forecast、跟进状态全空，仅钟经理一个联系人。属最高优先级的信息缺口。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c38-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["P2","先搞清楚它在买什么","摸清需求产品、用量、二期扩产设备选型时点","钟经理（唯一联系人，无全名与职位）","需求产品清单 + 二期选型时点","1 个月内","需求产品栏完全空白"]]},{"k":"p","id":"c38-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c38-s6-b3","items":["先摸清重庆万国到底要买什么","卡住二期扩产的初装窗口。"]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c38-s7-b1","items":["🔴 需求产品","🔴 用量","🔴 forecast","🔴 客户类型","🔴 钟经理全名与职位","🔴 二期设备选型时点。"]},{"k":"p","id":"c38-s7-b2","text":"**跨客户共性待确认（与本客户相关）**："},{"k":"ul","id":"c38-s7-b3","items":["[客户侧] 到底要买什么？台账需求产品栏完全空白 → 影响：最高优先级信息缺口；核实对象：钟经理"]},{"k":"source","id":"c38-s7-b4","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]},{"no":"36","name":"重庆锌榕","tier":"C","tierTag":"微型贸易","type":"中间商","cluster":"D 贸易/代采渠道","priority":"暂缓","status":"进行中","lastFollow":"2026-10-07","cutoff":"2026-11-02","contacts":1,"sections":[{"title":"一、一句话画像","blocks":[{"k":"p","id":"c39-s1-b1","text":"**注册资本 30 万、参保 2 人的综合贸易商，半导体只是兼营。**"}]},{"title":"二、公司背景与业务","blocks":[{"k":"ul","id":"c39-s2-b1","items":["**核心业务（精简）**：综合贸易 + 设备维保公司，经营范围含半导体产品、机电配件、管道、制冷配件、化工原料销售，附带机械设备维修与进出口业务。半导体只是其中一块兼营品类，并非主业。注册资本 30 万元、实缴 10 万元、参保 2 人，小型贸易商。","🌐 **规模与扩产**：微型贸易商，优先级最低。","🌐 **机台与制程**：—","**客户类型 / 集群**：中间商 / D 贸易/代采渠道"]}]},{"title":"三、需求与商机","blocks":[{"k":"table","id":"c39-s3-b1","head":["项目","内容"],"rows":[["需求产品","LC-110-20K"],["台账累计用量","🔴待补充"],["Forecast / 年需求","🔴待补充"],["实测成交金额","🔴待补充"],["实测单价","🔴待补充"],["冷却/使用场景","—"],["SRM","无"]]},{"k":"callout","id":"c39-s3-b2","text":"**商业价值判断**：体量过小、需求真实性待确认；只做现款现货，维持最低接触即可。"}]},{"title":"四、关键联系人（1 人）","blocks":[{"k":"table","id":"c39-s4-b1","head":["姓名","职位 / 角色","层级","状态","电话","邮箱","异常标注"],"rows":[["温跃东","老板","决策层","在职","13320223420","—","仅 1 人，无决策链备份"]]},{"k":"quote","id":"c39-s4-b2","items":["决策层仅 1 人，无备份，关键人风险高。"]}]},{"title":"五、核心风险与卡点","blocks":[{"k":"ol","id":"c39-s5-b1","items":["体量过小，需求真实性待确认。"]}]},{"title":"六、下一步行动","blocks":[{"k":"table","id":"c39-s6-b1","head":["优先级","目标","关键动作","对接口径 / 责任人","交付物","时间点","阻塞点"],"rows":[["⏸ 暂缓","维持最低接触","微型贸易商或通道退化，不值得投入资源","姚晏宁 / 温跃东 / 张经理、孔令东 / howrad","—","按需","注册资本 10-30 万，曦鸣联系人已离职"]]},{"k":"p","id":"c39-s6-b2","text":"**台账既有动作（按原文保留）**："},{"k":"ol","id":"c39-s6-b3","items":["确认节前需求是否还在","无实质需求则维持最低接触。"]},{"k":"p","id":"c39-s6-b4","text":"**补充动作（本次画像建议）**："},{"k":"table","id":"c39-s6-b5","head":["动作","责任人 / 口径","交付物","时间点","阻塞点"],"rows":[["确认节前 LC-110 需求是否仍存在，问清终端","席健 / 温跃东","需求存亡结论","2 周内","参保 2 人，无稳定采购量"]]}]},{"title":"七、缺失信息（需人工补充）","blocks":[{"k":"ol","id":"c39-s7-b1","items":["🔴 需求是否仍存在","🔴 终端客户","🔴 温老板的采购决策依据。"]}]},{"title":"附：跟进轨迹","blocks":[{"k":"table","id":"c39-s8-b1","head":["日期","方式","跟进内容","下一步"],"rows":[["2026-10-07","其他","—","确认节前的需求是否还在"]]},{"k":"source","id":"c39-s8-b2","text":"**资料来源**：《客户信息.xlsx》— 客户台账 / 跟进记录 / 联系人管理（席健的知识库 · 客户信息汇总更新），整合自《客户信息总表（2026-11-02 更新版）》；数据截止 2026-11-02。标 🌐 的外部信息为 2026-11-02 联网检索，未经客户确认，不可直接用于对外报价。SRM 网址与账号密码按规范不写入画像。"}]}]}]};
+
+/* ============ 常量 ============ */
+const W = 1680, H = 945, PADX = 72, BODY_H = 851;
+const CONTENT_W = W - PADX * 2;
+const EDIT_KEY = 'booklet-edits-v1';
+const META_KEY = 'booklet-meta-v1';
+const LEGACY_TRACK_KEY = 'booklet-track-v1';  // 旧版：仅轨迹增行（已并入 TBL_KEY）
+const TBL_KEY = 'booklet-tables-v1';          // 全表格：增行 / 删行 / 用户附表页
+const STYLE_KEY = 'booklet-styles-v1';        // 整块级字体格式（字号/字体/颜色等）
+
+let edits = {};
+try { edits = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (e) { edits = {}; }
+
+let styles = {};
+try { styles = JSON.parse(localStorage.getItem(STYLE_KEY) || '{}'); } catch (e) { styles = {}; }
+function saveStyles() {
+  try { localStorage.setItem(STYLE_KEY, JSON.stringify(styles)); } catch (err) {}
+}
+
+let tblState = { rows: {}, del: {}, pages: {}, seq: 0 };
+try {
+  tblState = Object.assign({ rows: {}, del: {}, pages: {}, seq: 0 },
+    JSON.parse(localStorage.getItem(TBL_KEY) || '{}'));
+} catch (e) { tblState = { rows: {}, del: {}, pages: {}, seq: 0 }; }
+function saveTbl() {
+  try { localStorage.setItem(TBL_KEY, JSON.stringify(tblState)); } catch (err) {}
+}
+function tblRowsSt(tid) {
+  if (!tblState.rows[tid]) tblState.rows[tid] = { seq: 0, list: [] };
+  return tblState.rows[tid];
+}
+function tblDel(tid) {
+  if (!tblState.del[tid]) tblState.del[tid] = [];
+  return tblState.del[tid];
+}
+function newXId() {
+  tblState.seq = (tblState.seq || 0) + 1;
+  return Date.now().toString(36) + tblState.seq;
+}
+
+/* 旧版轨迹增行数据一次性迁移到 TBL_KEY（含单元格 eid 改名） */
+(function migrateTrack() {
+  let old = null;
+  try { old = JSON.parse(localStorage.getItem(LEGACY_TRACK_KEY) || 'null'); } catch (e) { old = null; }
+  if (!old) return;
+  let moved = false;
+  Object.keys(old).forEach(no => {
+    const ex = old[no];
+    if (ex && ex.rows && ex.rows.length) {
+      tblState.rows['c' + no + '-track-t'] =
+        { seq: ex.seq || ex.rows.length, list: ex.rows.map(r => ({ id: r.id, cells: r.cells })) };
+      moved = true;
+    }
+  });
+  if (moved) {
+    Object.keys(edits).forEach(k => {
+      const m = k.match(/^(.+)-ax-(\d+)-(\d+)$/);
+      if (m && tblState.rows[m[1]]) { edits[m[1] + '-a' + m[2] + '-' + m[3]] = edits[k]; delete edits[k]; }
+    });
+    try { localStorage.setItem(EDIT_KEY, JSON.stringify(edits)); } catch (err) {}
+    saveTbl();
+  }
+  try { localStorage.removeItem(LEGACY_TRACK_KEY); } catch (err) {}
+})();
+
+/* 2026-11-06 客户重编号一次性迁移：原14(中芯S1 8寸)并入12、原32(华力微)删除，其后序号前移。
+   只迁移以客户 no 派生的键（meta/ov/h/占位表）；数据内 authored 表 id（c15-s8-b1 等）不变故不迁移。 */
+(function migrateRenumber() {
+  let done = null;
+  try { done = localStorage.getItem('booklet-map-v2'); } catch (e) {}
+  if (done) return;
+  function mapNo(s) {
+    const n = parseInt(s, 10);
+    if (isNaN(n)) return null;
+    if (n === 14 || n === 32) return null;   // 已并入/已删除
+    return String(n > 32 ? n - 2 : (n > 14 ? n - 1 : n)).padStart(2, '0');
+  }
+  function remapKey(k) {
+    let m = k.match(/^ov-(\d+)-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'ov-' + n + '-' + m[2] : null; }
+    m = k.match(/^h-(\d+)-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'h-' + n + '-' + m[2] : null; }
+    m = k.match(/^c0*(\d+)-meta-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'c' + n + '-meta-' + m[2] : null; }
+    m = k.match(/^c0*(\d+)-(track|contact)-t-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'c' + n + '-' + m[2] + '-t-' + m[3] : null; }
+    m = k.match(/^c0*(\d+)-track-src([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'c' + n + '-track-src' + m[2] : null; }
+    return k;
+  }
+  function remapTid(tid) {
+    const m = tid.match(/^c0*(\d+)-(track|contact)-t$/);
+    if (!m) return tid;
+    const n = mapNo(m[1]);
+    return n ? 'c' + n + '-' + m[2] + '-t' : null;
+  }
+  const ne = {};
+  Object.keys(edits).forEach(k => { const nk = remapKey(k); if (nk) ne[nk] = edits[k]; });
+  edits = ne;
+  try { localStorage.setItem(EDIT_KEY, JSON.stringify(edits)); } catch (err) {}
+  const nr = {}, nd = {};
+  Object.keys(tblState.rows || {}).forEach(tid => { const t = remapTid(tid); if (t) nr[t] = tblState.rows[tid]; });
+  Object.keys(tblState.del || {}).forEach(tid => { const t = remapTid(tid); if (t) nd[t] = tblState.del[tid]; });
+  tblState.rows = nr; tblState.del = nd;
+  const np = {};
+  Object.keys(tblState.pages || {}).forEach(no => { const n = mapNo(no); if (n) np[n] = tblState.pages[no]; });
+  tblState.pages = np;
+  saveTbl();
+  try { localStorage.setItem('booklet-map-v2', '1'); } catch (err) {}
+})();
+
+/* 2026-11-06 二次重编号：删除原35(西安奕斯伟)，其后序号再前移一位 */
+(function migrateRenumberV3() {
+  let done = null;
+  try { done = localStorage.getItem('booklet-map-v3'); } catch (e) {}
+  if (done) return;
+  function mapNo(s) {
+    const n = parseInt(s, 10);
+    if (isNaN(n)) return null;
+    if (n === 35) return null;               // 已删除
+    return String(n > 35 ? n - 1 : n).padStart(2, '0');
+  }
+  function remapKey(k) {
+    let m = k.match(/^ov-(\d+)-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'ov-' + n + '-' + m[2] : null; }
+    m = k.match(/^h-(\d+)-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'h-' + n + '-' + m[2] : null; }
+    m = k.match(/^c0*(\d+)-meta-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'c' + n + '-meta-' + m[2] : null; }
+    m = k.match(/^c0*(\d+)-(track|contact)-t-([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'c' + n + '-' + m[2] + '-t-' + m[3] : null; }
+    m = k.match(/^c0*(\d+)-track-src([\s\S]*)$/);
+    if (m) { const n = mapNo(m[1]); return n ? 'c' + n + '-track-src' + m[2] : null; }
+    return k;
+  }
+  function remapTid(tid) {
+    const m = tid.match(/^c0*(\d+)-(track|contact)-t$/);
+    if (!m) return tid;
+    const n = mapNo(m[1]);
+    return n ? 'c' + n + '-' + m[2] + '-t' : null;
+  }
+  const ne = {};
+  Object.keys(edits).forEach(k => { const nk = remapKey(k); if (nk) ne[nk] = edits[k]; });
+  edits = ne;
+  try { localStorage.setItem(EDIT_KEY, JSON.stringify(edits)); } catch (err) {}
+  const nr = {}, nd = {};
+  Object.keys(tblState.rows || {}).forEach(tid => { const t = remapTid(tid); if (t) nr[t] = tblState.rows[tid]; });
+  Object.keys(tblState.del || {}).forEach(tid => { const t = remapTid(tid); if (t) nd[t] = tblState.del[tid]; });
+  tblState.rows = nr; tblState.del = nd;
+  const np = {};
+  Object.keys(tblState.pages || {}).forEach(no => { const n = mapNo(no); if (n) np[n] = tblState.pages[no]; });
+  tblState.pages = np;
+  saveTbl();
+  try { localStorage.setItem('booklet-map-v3', '1'); } catch (err) {}
+})();
+
+const PAGES = [];          // {el, kind, client?}
+let idx = 0;
+let animating = false;
+let editMode = false;
+
+const $ = s => document.querySelector(s);
+const book = $('#book');
+
+/* ============ 文本处理 ============ */
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+const MK = /(🌐|🔴|🔥|⚠️|⏸|✅|❌|★|→)/g;
+function inline(t) {
+  let s = esc(t);
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  s = s.replace(MK, '<span class="mk">$1</span>');
+  return s;
+}
+function tierColor(t) { return (DATA.tiers[t] || {}).color || '#808080'; }
+
+/* ============ 每日全网追新数据层（news-data.js 提供，缺失则静默降级） ============ */
+const NEWS = (typeof window.NEWS_DATA === 'object' && window.NEWS_DATA && window.NEWS_DATA.items) ? window.NEWS_DATA : null;
+const NEWS_TAG_COLOR = { '商机': '#C00000', '扩产': '#C00000', '业绩': '#2E5496', '政策': '#C55A11', '风险': '#C55A11', '价格': '#1E7B34', '人事': '#808080', '订单': '#C00000', '技术': '#2E5496', '动态': '#2E5496' };
+function newsTagColor(t) { return NEWS_TAG_COLOR[t] || '#2E5496'; }
+function newsFresh(d) {
+  if (!d) return false;
+  const dd = parseDate(d);
+  if (!dd) return false;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return (today - dd) / 86400000 <= 3;
+}
+function newsOf(no) {
+  if (!NEWS) return [];
+  return NEWS.items.filter(n => String(n.no) === String(no));
+}
+function newsHtml(n) {
+  const fresh = newsFresh(n.date);
+  return (fresh ? '<span class="n-fresh">新</span>' : '') +
+    '<span class="n-date">' + esc(n.date || '') + '</span>' +
+    '<span class="n-tag" style="background:' + newsTagColor(n.tag) + '">' + esc(n.tag || '动态') + '</span>' +
+    '<span class="n-tt">' + inline(n.title || '') + '</span>' +
+    '<span class="n-src">' + (n.url ? '<a href="' + esc(n.url) + '" target="_blank" rel="noopener" title="点击溯源原文">🔗 ' + esc(n.source || '溯源') + '</a>' : esc(n.source || '')) + '</span>' +
+    (n.summary ? '<div class="n-sum">' + inline(n.summary) + '</div>' : '');
+}
+
+/* ============ 统一模板归一化：每家客户固定四个类目页 ============ */
+/* 1 公司背景简介 / 2 需求与上机 / 3 联系人 / 4 跟进轨迹
+   「核心风险 / 下一步行动」不再成页；缺联系人或跟进轨迹都补固定占位表；单页排不下自动「续页」 */
+const TRACK_HEAD = ['日期', '方式', '跟进内容', '下一步'];
+const CONTACT_HEAD = ['姓名', '职位 / 角色', '层级', '状态', '电话', '邮箱', '异常标注'];
+const CATS = [
+  { no: '一', name: '公司背景简介', keys: ['一句话画像', '公司背景'] },
+  { no: '二', name: '需求与上机', keys: ['需求与商机', '需求'] },
+  { no: '三', name: '联系人', keys: ['联系人'] },
+  { no: '四', name: '跟进轨迹', keys: ['跟进轨迹'] }
+];
+function catIndexOf(title) {
+  for (let i = 0; i < CATS.length; i++) {
+    for (let k = 0; k < CATS[i].keys.length; k++) {
+      if (title.indexOf(CATS[i].keys[k]) >= 0) return i;
+    }
+  }
+  return -1;
+}
+function cleanSecTitle(t) {
+  return String(t || '')
+    .replace(/^[一二三四五六七八九十]+、/, '')
+    .replace(/（[^）]*）$/, '')
+    .trim();
+}
+function normalizeClient(c) {
+  const cats = CATS.map(cat => ({ cat: cat, sections: [] }));
+  let source = null;
+  (c.sections || []).forEach(sec => {
+    const blocks = [];
+    (sec.blocks || []).forEach(b => {
+      if (b.k === 'source') source = b;   // 资料来源统一放到该客户最后一页页脚
+      else blocks.push(b);
+    });
+    const i = catIndexOf(sec.title);
+    if (i >= 0 && blocks.length) {
+      cats[i].sections.push({ title: cleanSecTitle(sec.title), blocks: blocks });
+    }
+  });
+  // 联系人：无记录或无表格的客户补统一固定空表，保证联系人页永远有表格
+  const contactCat = cats[2];
+  const hasContactTbl = contactCat.sections.some(s => s.blocks.some(b => b.k === 'table'));
+  if (!hasContactTbl) {
+    contactCat.sections.push({
+      title: contactCat.sections.length ? '联系人（补）' : '联系人',
+      blocks: [{ k: 'table', id: 'c' + c.no + '-contact-t', head: CONTACT_HEAD,
+                 rows: [['—', '—', '—', '🔴 台账暂无联系人记录，待补充', '—', '—', '—']] }]
+    });
+  }
+  // 跟进轨迹：无记录的客户补占位表，保证四页齐全
+  const trackCat = cats[3];
+  if (!trackCat.sections.length) {
+    trackCat.sections.push({
+      title: '跟进轨迹',
+      blocks: [{ k: 'table', id: 'c' + c.no + '-track-t', head: TRACK_HEAD,
+                 rows: [['—', '—', '🔴 台账暂无跟进记录，待补充', '—']] }]
+    });
+    if (!source) {
+      source = { k: 'source', id: 'c' + c.no + '-track-src',
+                 text: '**资料来源**：《客户信息总表（' + DATA.date + ' 更新版）》— 客户台账 / 跟进记录；暂无跟进记录，待补充。' };
+    }
+  }
+  // 全网追新动态：注入类目一末尾（数据由 news-data.js 提供；标🔴为台账缺失之外，追新条目均附溯源链接）
+  if (cats[0].sections.length) {
+    const its = newsOf(c.no);
+    if (its.length) {
+      cats[0].sections.push({
+        title: '🌐 全网追新动态（每日自动检索）',
+        blocks: [{ k: 'news', id: 'c' + c.no + '-news', items: its }]
+      });
+    }
+  }
+  return { cats: cats, source: source };
+}
+
+/* ============ 块渲染 ============ */
+function buildBlock(b, firstInSection) {
+  const wrap = document.createElement('div');
+  wrap.className = 'blk';
+  wrap.dataset.eid = b.id;
+  if (b.k === 'p') {
+    wrap.innerHTML = inline(b.text);
+  } else if (b.k === 'callout') {
+    wrap.className = 'blk callout';
+    wrap.innerHTML = inline(b.text);
+  } else if (b.k === 'source') {
+    wrap.className = 'src';
+    wrap.dataset.eid = b.id;
+    wrap.innerHTML = inline(b.text);
+  } else if (b.k === 'quote') {
+    wrap.className = 'blk';
+    wrap.innerHTML = '<blockquote class="qt">' + b.items.map(x => inline(x)).join('<br>') + '</blockquote>';
+  } else if (b.k === 'ul' || b.k === 'ol') {
+    const tag = b.k;
+    wrap.innerHTML = '<' + tag + '>' + b.items.map((x, i) =>
+      '<li data-eid="' + b.id + '-i' + i + '">' + inline(x) + '</li>').join('') + '</' + tag + '>';
+    wrap.dataset.eid = b.id;
+  } else if (b.k === 'table') {
+    const cols = b.head.length;
+    wrap.className = 'blk';
+    wrap.dataset.eid = b.id;
+    let html = '<table class="tbl" data-cols="' + cols + '"><thead><tr>' +
+      b.head.map(h => '<th>' + inline(h) + '</th>').join('') + '</tr></thead><tbody>';
+    b.rows.forEach((r, ri) => {
+      html += '<tr>' + r.map((c, ci) =>
+        '<td data-eid="' + b.id + '-r' + ri + '-' + ci + '">' + inline(c) + '</td>').join('') + '</tr>';
+    });
+    wrap.innerHTML = html + '</tbody></table>';
+  } else if (b.k === 'news') {
+    wrap.className = 'blk';
+    wrap.innerHTML = b.items.map(n => '<div class="news-item' + (newsFresh(n.date) ? ' fresh' : '') + '">' + newsHtml(n) + '</div>').join('');
+  } else {
+    wrap.innerHTML = inline(b.text || '');
+  }
+  return wrap;
+}
+
+function buildSection(sec, isFirst) {
+  const h = document.createElement('div');
+  h.className = 'sec-title' + (isFirst ? ' first' : '');
+  h.dataset.eid = 'h-' + sec.blocks[0].id;
+  h.textContent = sec.title;
+  return h;
+}
+
+/* ============ 单位拆解（标题 + 首块绑定，避免孤行） ============ */
+function buildUnits(sections) {
+  const units = [];
+  sections.forEach((sec, si) => {
+    const head = buildSection(sec, si === 0);
+    const blocks = sec.blocks.map(b => buildBlock(b, false));
+    if (!blocks.length) return;
+    const g = document.createElement('div');
+    g.className = 'blk-group';
+    g.appendChild(head);
+    g.appendChild(blocks[0]);
+    units.push({ el: g, isFirst: si === 0 });
+    for (let i = 1; i < blocks.length; i++) units.push({ el: blocks[i] });
+  });
+  return units;
+}
+
+/* ============ 分隔条 / 页头页脚 ============ */
+function makeShell(kind, client, opts) {
+  opts = opts || {};
+  const p = document.createElement('div');
+  p.className = 'page';
+  p.dataset.kind = kind;
+
+  if (kind !== 'cover') {
+    if (client) {
+      const rb = document.createElement('div');
+      rb.className = 'ribbon';
+      rb.style.background = tierColor(client.tier);
+      p.appendChild(rb);
+    }
+    const head = document.createElement('div');
+    head.className = 'pg-head';
+    head.innerHTML = '<span><b>' + (DATA.title || '客户商业画像记录册') + '</b>　' + (opts.headLeft || '') + '</span>' +
+      '<span>' + (opts.headRight || '') + '</span>';
+    p.appendChild(head);
+
+    const body = document.createElement('div');
+    body.className = 'pg-body';
+    const flow = document.createElement('div');
+    flow.className = 'pg-flow';
+    body.appendChild(flow);
+    p.appendChild(body);
+
+    const foot = document.createElement('div');
+    foot.className = 'pg-foot';
+    foot.innerHTML = '<span>内部资料 · 数据截止 ' + DATA.date + ' · 标🌐为外部检索、标🔴为台账缺失</span>' +
+      '<span class="pn"></span>';
+    p.appendChild(foot);
+    p._flow = flow;
+    p._body = body;
+  }
+  return p;
+}
+
+/* ============ 测量 ============ */
+const measure = document.createElement('div');
+measure.id = 'measure';
+measure.style.cssText = 'position:absolute;left:-99999px;top:0;width:' + CONTENT_W +
+  'px;font-size:16.5px;line-height:1.72;overflow:hidden;visibility:hidden;';
+document.body.appendChild(measure);
+
+function unitHeight(el) {
+  measure.innerHTML = '';
+  measure.appendChild(el);
+  const h = measure.offsetHeight;
+  return h;
+}
+
+/* ============ 正文分页：每家客户固定六个类目页 ============ */
+function custBanner(c) {
+  const b = document.createElement('div');
+  b.className = 'cust-banner';
+  const metaFields = [
+    ['type', '客户类型', c.type],
+    ['cluster', '所属集群', c.cluster],
+    ['priority', '商机优先级', c.priority],
+    ['status', '跟进状态', c.status],
+    ['lastFollow', '最近跟进', c.lastFollow],
+    ['contacts', '关键联系人', c.contacts ? c.contacts + ' 人' : '🔴 无记录']
+  ];
+  b.innerHTML =
+    '<div class="cust-kicker">Customer Profile　' + c.no + '　·　四页模板</div>' +
+    '<div class="cust-name">' + esc(c.name) + '</div>' +
+    '<div class="cards">' +
+      metaFields.map(f =>
+        '<div class="card"><div class="k">' + f[1] + '</div>' +
+        '<div class="v editable-field" data-eid="c' + c.no + '-meta-' + f[0] + '" contenteditable="true" title="点击直接修改">' +
+        inline(f[2] || '—') + '</div></div>').join('') +
+    '</div>';
+  return b;
+}
+function custStrip(c, ci, xpid) {
+  const d = document.createElement('div');
+  d.className = 'cust-strip';
+  d.innerHTML =
+    '<span class="cs-no">' + c.no + '</span>' +
+    '<span class="cs-nm">' + esc(c.name) + '</span>' +
+    '<span class="cs-cat">四页模板 · ' + (ci + 1) + '/4</span>' +
+    (xpid ? '<span class="pgdel" data-delpage="' + c.no + '|' + xpid + '" title="删除此附表页（含续页）">✕ 删此页</span>' : '');
+  return d;
+}
+function catTitleEl(c, cat, ci, cont) {
+  const h = document.createElement('div');
+  h.className = 'sec-title first';
+  h.dataset.eid = 'h-' + c.no + '-cat' + (ci + 1) + (cont ? '-c' + cont : '');
+  h.textContent = cat.no + '、' + cat.name + (cont ? '（续 ' + cont + '）' : '');
+  return h;
+}
+function paginateClients() {
+  const pages = [];
+  DATA.clients.forEach(c => {
+    const norm = normalizeClient(c);
+    norm.cats.forEach((cat, ci) => buildCatPages(c, cat, ci, pages));
+    // 资料来源统一放该客户最后一页页脚；放不下则单独一页
+    if (norm.source) {
+      const last = pages[pages.length - 1];
+      const srcEl = buildBlock(norm.source, false);
+      last.el._flow.appendChild(srcEl);
+      if (flowHeight(last.el) > BODY_H - 6) {
+        last.el._flow.removeChild(srcEl);
+        const page = makeShell('client', c, {
+          headLeft: '　—— ' + c.name + ' · 资料来源',
+          headRight: '第 ' + c.no + ' 家 / 共 ' + DATA.clients.length + ' 家 · 附'
+        });
+        page._flow.appendChild(custStrip(c, 3));
+        page._flow.appendChild(srcEl);
+        book.appendChild(page);
+        pages.push({ el: page, client: c, cat: 3 });
+      }
+    }
+  });
+  return pages;
+}
+
+/* 普通类目页：流式填充，超出即「续页」；表格逐行检测，写满自动续表 */
+function buildCatPages(c, cat, ci, pages) {
+  const LIMIT = BODY_H - 6;
+  const ROWLIM = LIMIT - toolsHeight();   // 表格页末尾要留出工具条的位置
+  let cont = 0, page = null, n = 0;
+
+  function newPage() {
+    page = makeShell('client', c, {
+      headLeft: '　—— ' + c.name + ' · ' + cat.cat.name + (cont ? '（续 ' + cont + '）' : ''),
+      headRight: '第 ' + c.no + ' 家 / 共 ' + DATA.clients.length + ' 家 · 类目 ' + (ci + 1) + '/4'
+    });
+    page._flow.appendChild((ci === 0 && cont === 0) ? custBanner(c) : custStrip(c, ci));
+    page._flow.appendChild(catTitleEl(c, cat.cat, ci, cont));
+    book.appendChild(page);   // 立即挂入文档，才能取到真实布局
+    pages.push({ el: page, client: c, cat: ci });
+    n = 0;
+  }
+  function put(el) {
+    page._flow.appendChild(el);
+    if (n > 0 && flowHeight(page) > LIMIT) {
+      page._flow.removeChild(el);
+      cont++; newPage();
+      page._flow.appendChild(el);
+    }
+    n++;
+  }
+  function putTable(b) {
+    const rows = tblRowsOf(b);
+    const mkTbl = () => {                      // 跟进轨迹类目（四）的表格打标记，供 7 日提醒同步
+      const t = newTblEl(b);
+      if (ci === 3) t.dataset.track = c.no;
+      return t;
+    };
+    let t = mkTbl();
+    page._flow.appendChild(t);
+    let start = 0;
+    if (rows.length) { t.tBodies[0].appendChild(rowEl(b, rows[0])); start = 1; }
+    if (n > 0 && flowHeight(page) > LIMIT) {
+      // 当前页放不下「表头+首行」→ 整表挪到新页
+      page._flow.removeChild(t);
+      cont++; newPage();
+      t = mkTbl();
+      page._flow.appendChild(t);
+      if (rows.length) t.tBodies[0].appendChild(rowEl(b, rows[0]));
+    }
+    for (let ri = start; ri < rows.length; ri++) {
+      const tr = rowEl(b, rows[ri]);
+      t.tBodies[0].appendChild(tr);
+      if (flowHeight(page) > ROWLIM) {
+        t.tBodies[0].removeChild(tr);
+        cont++; newPage();
+        t = mkTbl();
+        page._flow.appendChild(t);
+        t.tBodies[0].appendChild(tr);
+      }
+    }
+    if (!rows.length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = b.head.length;
+      td.className = 'empty-hint';
+      td.textContent = '（空表 · 点下方「＋ 行」开始填写）';
+      tr.appendChild(td);
+      t.tBodies[0].appendChild(tr);
+    }
+    const tl = tblToolsEl(c, ci, b);
+    page._flow.appendChild(tl);
+    if (n > 0 && flowHeight(page) > LIMIT) {
+      page._flow.removeChild(tl);
+      cont++; newPage();
+      page._flow.appendChild(tblToolsEl(c, ci, b));
+    }
+    n++;
+  }
+
+  newPage();
+  cat.sections.forEach((sec, si) => {
+    let sub = null;
+    if (si > 0) {
+      sub = document.createElement('div');
+      sub.className = 'sub-h';
+      sub.textContent = sec.title;
+    }
+    sec.blocks.forEach((b, bi) => {
+      if (b.k === 'table') {
+        if (sub) { put(sub); sub = null; }
+        putTable(b);
+        return;
+      }
+      const el = buildBlock(b, false);
+      if (sub && bi === 0) {
+        const g = document.createElement('div');
+        g.appendChild(sub); g.appendChild(el);
+        put(g);
+      } else put(el);
+    });
+  });
+
+  // 用户附表页（空白 / 复制），挂在该类目之后
+  (tblState.pages[c.no] || []).forEach(pg => {
+    if (pg.ci === ci) buildExtraTblPage(c, cat, ci, pg, pages);
+  });
+}
+
+/* ============ 全表格统一编辑层 ============ */
+/* 工具条高度（每张表格页末尾都要放） */
+function toolsHeight() {
+  if (toolsHeight._h != null) return toolsHeight._h;
+  const d = document.createElement('div');
+  d.className = 'track-tools blk';
+  d.style.cssText = 'position:absolute;left:-99999px;top:0;width:' + CONTENT_W + 'px;visibility:hidden;';
+  d.innerHTML = '<button class="addrow-btn">＋ 行</button><span class="addrow-hint">占位</span>';
+  document.body.appendChild(d);
+  toolsHeight._h = d.offsetHeight + 8;
+  document.body.removeChild(d);
+  return toolsHeight._h;
+}
+function isTrackTid(id) { return /-track-t$/.test(id); }
+function newTblEl(b) {
+  const t = document.createElement('table');
+  t.className = 'tbl' + (isTrackTid(b.id) ? ' track-tbl' : '');
+  t.dataset.cols = b.head.length;
+  t.dataset.tid = b.id;
+  t.innerHTML = '<thead><tr>' + b.head.map(x => '<th>' + inline(x) + '</th>').join('') + '</tr></thead><tbody></tbody>';
+  return t;
+}
+/* 行数据 = 原始行（剔除已删）+ 用户增行；key 稳定，删行/增行不串位 */
+function tblRowsOf(b) {
+  const st = tblState.rows[b.id] || { list: [] };
+  const del = tblState.del[b.id] || [];
+  const out = [];
+  (b.rows || []).forEach((r, i) => {
+    if (del.indexOf('o' + i) < 0) out.push({ key: 'o' + i, cells: r, kind: 'orig', i: i });
+  });
+  (st.list || []).forEach(r => out.push({ key: 'a' + r.id, cells: r.cells, kind: 'add', id: r.id }));
+  return out;
+}
+function rowEl(b, rd) {
+  const tr = document.createElement('tr');
+  if (rd.kind === 'add') tr.className = 'add-row';
+  const n = rd.cells.length;
+  rd.cells.forEach((cell, ci) => {
+    const td = document.createElement('td');
+    if (rd.kind === 'add') {
+      const span = document.createElement('span');
+      span.className = 'cell';
+      span.dataset.eid = b.id + '-a' + rd.id + '-' + ci;   // 增行单元格，始终可编辑
+      span.setAttribute('contenteditable', 'true');
+      span.innerHTML = inline(cell);
+      td.appendChild(span);
+    } else {
+      td.dataset.eid = b.id + '-' + rd.key + '-' + ci;
+      td.innerHTML = inline(cell);
+    }
+    if (ci === n - 1) {
+      const dx = document.createElement('span');
+      dx.className = 'delx';
+      dx.dataset.delt = b.id;
+      dx.dataset.delr = rd.key;
+      dx.textContent = '×';
+      dx.title = '删除此行';
+      td.appendChild(dx);
+    }
+    tr.appendChild(td);
+  });
+  return tr;
+}
+function tblToolsEl(c, ci, b) {
+  const delN = (tblState.del[b.id] || []).length;
+  const tools = document.createElement('div');
+  tools.className = 'track-tools blk';
+  tools.innerHTML =
+    '<button class="addrow-btn" data-addtrow="' + b.id + '">＋ 行</button>' +
+    '<button class="addrow-btn" data-tblpage="' + c.no + '|' + ci + '|' + b.id + '">＋ 空白表格页</button>' +
+    '<button class="addrow-btn" data-cpypage="' + c.no + '|' + ci + '|' + b.id + '">⧉ 复制本表为新页</button>' +
+    (delN ? '<button class="addrow-btn" data-undel="' + b.id + '">↺ 恢复已删 ' + delN + ' 行</button>' : '') +
+    '<span class="addrow-hint">单元格可直接点击输入；写满自动续页，悬停行尾 × 删行</span>';
+  return tools;
+}
+/* 取页面内容流真实高度（display:none 时无布局，需临时渲染） */
+function flowHeight(pageEl) {
+  const el = pageEl;
+  el.style.display = 'block';
+  el.style.visibility = 'hidden';
+  const h = el._flow.scrollHeight;
+  el.style.display = '';
+  el.style.visibility = '';
+  return h;
+}
+/* 用户附表页：空白表格页 / 复制生成的表格页（可跨多页续排） */
+function buildExtraTblPage(c, cat, ci, pg, pages) {
+  const LIMIT = BODY_H - 6;
+  const ROWLIM = LIMIT - toolsHeight();
+  const blk = { k: 'table', id: pg.tid, head: pg.head, rows: pg.rows || [] };
+  let cont = 0, page = null, t = null;
+
+  function newPage() {
+    page = makeShell('client', c, {
+      headLeft: '　—— ' + c.name + ' · ' + pg.title + '（附表）' + (cont ? '（续 ' + cont + '）' : ''),
+      headRight: '第 ' + c.no + ' 家 / 共 ' + DATA.clients.length + ' 家 · 类目 ' + (ci + 1) + '/4'
+    });
+    page._flow.appendChild(custStrip(c, ci, pg.id));
+    const h = catTitleEl(c, { no: cat.cat.no, name: pg.title + '（附表）' }, ci, 0);
+    h.dataset.eid = 'h-xp-' + pg.id;
+    page._flow.appendChild(h);
+    t = newTblEl(blk);
+    if (ci === 3) t.dataset.track = c.no;   // 轨迹附表页同样打标记
+    page._flow.appendChild(t);
+    book.appendChild(page);
+    pages.push({ el: page, client: c, cat: ci });
+    cont++;
+  }
+
+  newPage();
+  const rows = tblRowsOf(blk);
+  rows.forEach(rd => {
+    const tr = rowEl(blk, rd);
+    t.tBodies[0].appendChild(tr);
+    if (flowHeight(page) > ROWLIM) {
+      t.tBodies[0].removeChild(tr);
+      newPage();
+      t.tBodies[0].appendChild(tr);
+    }
+  });
+  if (!rows.length) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = pg.head.length;
+    td.className = 'empty-hint';
+    td.textContent = '（空白表格页 · 点「＋ 行」开始填写）';
+    tr.appendChild(td);
+    t.tBodies[0].appendChild(tr);
+  }
+  page._flow.appendChild(tblToolsEl(c, ci, blk));
+  if (flowHeight(page) > LIMIT) {
+    page._flow.removeChild(page._flow.lastElementChild);
+    newPage();
+    page._flow.appendChild(tblToolsEl(c, ci, blk));
+  }
+}
+/* ============ 目录 ============ */
+function buildToc(startPageOf) {
+  const per = Math.ceil(DATA.clients.length / 2);
+  const pages = [];
+  for (let k = 0; k < 2; k++) {
+    const part = DATA.clients.slice(k * per, (k + 1) * per);
+    const p = makeShell('toc', null, {
+      headLeft: '　目录', headRight: 'Contents · ' + (k + 1) + '/2'
+    });
+    if (k === 0) {
+      const h = document.createElement('div');
+      h.className = 'toc-h';
+      h.textContent = '目录';
+      p._flow.appendChild(h);
+      const s = document.createElement('div');
+      s.className = 'toc-s';
+      s.textContent = 'CONTENTS · ' + DATA.clients.length + ' CUSTOMERS';
+      p._flow.appendChild(s);
+    } else {
+      const s = document.createElement('div');
+      s.className = 'toc-s';
+      s.style.marginTop = '8px';
+      s.textContent = 'CONTENTS · 续';
+      p._flow.appendChild(s);
+    }
+    part.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'toc-row';
+      row.dataset.goto = c.no;
+      row.innerHTML =
+        '<span class="toc-no">' + c.no + '</span>' +
+        '<span class="toc-tier" style="color:' + tierColor(c.tier) + '">' + c.tier + '</span>' +
+        '<span class="toc-name">' + esc(c.name) + '</span>' +
+        '<span class="toc-dot"></span>' +
+        '<span class="toc-pg" data-pg="' + c.no + '">—</span>';
+      p._flow.appendChild(row);
+    });
+    pages.push(p);
+  }
+  return pages;
+}
+
+/* ============ 组装 ============ */
+function build() {
+  book.innerHTML = '';
+  PAGES.length = 0;
+
+  const ovs = buildOverview();
+  const content = paginateClients();
+
+  const all = [...ovs, ...content.map(x => x.el)];
+  all.forEach(el => book.appendChild(el));
+
+  ovs.forEach(el => PAGES.push({ el, kind: 'overview' }));
+  content.forEach(x => PAGES.push({ el: x.el, kind: 'client', client: x.client }));
+
+  // 页码 + 客户起始页
+  const total = PAGES.length;
+  const firstPage = {};
+  PAGES.forEach((pg, i) => {
+    const pn = pg.el.querySelector('.pn');
+    if (pn) pn.innerHTML = '<b>' + (i + 1) + '</b> / ' + total;
+    if (pg.client && !firstPage[pg.client.no]) firstPage[pg.client.no] = i;
+  });
+  PAGES.forEach(pg => {
+    pg.el.querySelectorAll('[data-pg]').forEach(s => {
+      const no = s.dataset.pg;
+      s.textContent = firstPage[no] != null ? firstPage[no] + 1 : '—';
+    });
+  });
+  DATA._first = firstPage;
+  DATA._total = total;
+  DATA._tocStart = ovs.length;
+
+  // 溢出兜底：按需缩放（zoom 不改变元素自身 scrollHeight 口径，直接按比例一次设定）
+  PAGES.forEach(pg => {
+    const el = pg.el;
+    if (!el._flow) return;
+    el.style.display = 'block';
+    el.style.visibility = 'hidden';
+    const h = el._flow.scrollHeight;   // zoom 未设 = 1:1 内容高
+    el.style.display = '';
+    el.style.visibility = '';
+    if (h > BODY_H + 2) {
+      el._flow.style.zoom = Math.max(0.72, (BODY_H - 2) / h).toFixed(2);
+    }
+  });
+
+  // 目录跳转
+  book.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', () => {
+      const no = el.dataset.goto;
+      const p = DATA._first[no];
+      if (p != null) goTo(p);
+    });
+  });
+
+  applyEdits();
+  syncAllTrackDates();
+  updateReminders();
+  measure.innerHTML = '';
+  populateJump();
+  fillSlider();
+  fit();
+  show(0, true);
+}
+
+/* ============ 主页总览表 + 7日跟进提醒 ============ */
+function stripHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').trim();
+}
+function parseDate(s) {
+  const m = stripHtml(s).match(/(20\d{2})\s*[.\/\-年]\s*(\d{1,2})\s*[.\/\-月]\s*(\d{1,2})/);
+  if (!m) return null;
+  const d = new Date(+m[1], +m[2] - 1, +m[3]);
+  return isNaN(d) ? null : d;
+}
+/* 生效值：优先取用户修改（总览列 / 信息卡），否则取原始数据 */
+function ovDays(c) {
+  const ok = 'ov-' + c.no + '-lastFollow', mk = 'c' + c.no + '-meta-lastFollow';
+  let raw = c.lastFollow;
+  if (edits[ok] != null) raw = edits[ok];
+  else if (edits[mk] != null) raw = edits[mk];
+  return parseDate(raw);
+}
+/* ---- 跟进轨迹最新日期 ⇄ 主页最近跟进 / 7日提醒 同步 ---- */
+function fmtDate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+/* 轨迹里最近一次"已发生"的跟进日（≤今天）；没有才取最早的未来计划日 */
+function trackLatest(no) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let past = null, future = null;
+  book.querySelectorAll('table[data-track="' + no + '"]').forEach(t => {
+    t.querySelectorAll('tbody tr').forEach(tr => {
+      const td = tr.querySelector('td');
+      if (!td) return;
+      const d = parseDate(td.textContent);
+      if (!d) return;
+      if (d <= today) { if (!past || d > past) past = d; }
+      else if (!future || d < future) future = d;
+    });
+  });
+  return past || future;
+}
+/* 轨迹日期为权威来源：无条件写回主页总览列 + 客户信息卡（修正误写日期、防卡死） */
+function syncTrackFor(c) {
+  const t = trackLatest(c.no);
+  if (!t) return false;
+  const ok = 'ov-' + c.no + '-lastFollow', mk = 'c' + c.no + '-meta-lastFollow';
+  const cur = parseDate(edits[ok] != null ? edits[ok] : (edits[mk] != null ? edits[mk] : c.lastFollow));
+  if (cur && cur.getTime() === t.getTime()) return false;
+  const s = fmtDate(t);
+  copyEdits(ok, s);
+  copyEdits(mk, s);
+  return true;
+}
+function syncAllTrackDates() {
+  let n = 0;
+  (DATA.clients || []).forEach(c => { if (syncTrackFor(c)) n++; });
+  if (n) { try { localStorage.setItem(EDIT_KEY, JSON.stringify(edits)); } catch (err) {} }
+  return n;
+}
+function ovInit(c, f) {
+  const ok = 'ov-' + c.no + '-' + f, mk = 'c' + c.no + '-meta-' + f;
+  if (edits[ok] != null) return edits[ok];
+  if (edits[mk] != null) return edits[mk];
+  return inline(c[f] || '—');
+}
+/* 双向同步：总览列 ⇄ 客户首页信息卡 */
+function copyEdits(targetK, html) {
+  const el = book.querySelector('[data-eid="' + cssEsc(targetK) + '"]');
+  if (el && el !== document.activeElement && el.innerHTML !== html) el.innerHTML = html;
+  if (edits[targetK] !== html) edits[targetK] = html;
+}
+function syncPair(k) {
+  let m = k.match(/^c(\d+)-meta-(type|status|lastFollow)$/);
+  if (m) { copyEdits('ov-' + m[1] + '-' + m[2], edits[k]); return; }
+  m = k.match(/^ov-(\d+)-(type|status|lastFollow)$/);
+  if (m) { copyEdits('c' + m[1] + '-meta-' + m[2], edits[k]); }
+}
+function ovRow(c) {
+  const tr = document.createElement('tr');
+  tr.dataset.ovno = c.no;
+  tr.innerHTML =
+    '<td style="text-align:center">' + esc(c.no) + '</td>' +
+    '<td style="font-weight:600"><span class="ov-link" data-goto="' + c.no + '" title="点击跳转到该客户画像">' + esc(c.name) + '</span></td>' +
+    '<td style="color:' + tierColor(c.tier) + ';font-weight:800;text-align:center">' + esc(c.tier || '') + '</td>' +
+    '<td><span class="editable-field" contenteditable="true" data-eid="ov-' + c.no + '-type">' + ovInit(c, 'type') + '</span></td>' +
+    '<td><span class="editable-field" contenteditable="true" data-eid="ov-' + c.no + '-status">' + ovInit(c, 'status') + '</span></td>' +
+    '<td><span class="editable-field" contenteditable="true" data-eid="ov-' + c.no + '-lastFollow">' + ovInit(c, 'lastFollow') + '</span></td>' +
+    '<td class="ov-rem"></td>' +
+    '<td><span class="editable-field" contenteditable="true" data-eid="ov-' + c.no + '-tierTag">' + ovInit(c, 'tierTag') + '</span></td>';
+  return tr;
+}
+/* 主页总览表（放不下自动续页） */
+function buildOverview() {
+  const pages = [];
+  const LIMIT = BODY_H - 6;
+  let page = null, tb = null, cont = 0;
+  function newPage() {
+    page = makeShell('overview', null, {
+      headLeft: '　客户总览' + (cont ? '（续 ' + cont + '）' : ''),
+      headRight: '主页预览 · 数据截止 ' + DATA.date
+    });
+    if (cont === 0) {
+      const h = document.createElement('div');
+      h.className = 'ov-h';
+      h.innerHTML = '<span class="ov-t">客户总览</span><span class="ov-sum">…</span>';
+      page._flow.appendChild(h);
+    }
+    const tbl = document.createElement('table');
+    tbl.className = 'ov';
+    tbl.innerHTML =
+      '<colgroup><col style="width:4.5%"><col style="width:19%"><col style="width:4.5%">' +
+      '<col style="width:8.5%"><col style="width:8.5%"><col style="width:9.5%">' +
+      '<col style="width:13%"><col style="width:32.5%"></colgroup>' +
+      '<thead><tr><th>序号</th><th>客户名称</th><th>分层</th><th>客户类型</th>' +
+      '<th>跟进状态</th><th>最近跟进</th><th>7日提醒</th><th>重点提示</th></tr></thead><tbody></tbody>';
+    page._flow.appendChild(tbl);
+    tb = tbl.tBodies[0];
+    book.appendChild(page);
+    pages.push(page);
+    cont++;
+  }
+  newPage();
+  DATA.clients.forEach(c => {
+    const tr = ovRow(c);
+    tb.appendChild(tr);
+    if (flowHeight(page) > LIMIT) {
+      tb.removeChild(tr);
+      newPage();
+      tb.appendChild(tr);
+    }
+  });
+  return pages;
+}
+/* 7日提醒：重算全部行的提醒状态 + 汇总 + 工具条徽标 */
+let REM_OVERDUE = 0;
+function updateReminders() {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let overdue = 0;
+  book.querySelectorAll('tr[data-ovno]').forEach(tr => {
+    const c = (DATA.clients || []).find(x => x.no === tr.dataset.ovno);
+    const cell = tr.querySelector('.ov-rem');
+    if (!c || !cell) return;
+    tr.classList.remove('due-red');
+    const d = ovDays(c);
+    if (!d) { cell.innerHTML = '<span class="rem-gray">— 无日期</span>'; return; }
+    const days = Math.round((today - d) / 86400000);
+    if (days < 0) { cell.innerHTML = '<span class="rem-blue">' + (-days) + ' 天后跟进</span>'; }
+    else if (days > 7) { overdue++; tr.classList.add('due-red'); cell.innerHTML = '<span class="rem-red">⚠️ 已超 ' + days + ' 天</span>'; }
+    else if (days === 0) { cell.innerHTML = '<span class="rem-ok">✅ 今日已跟进</span>'; }
+    else { cell.innerHTML = '<span class="rem-ok">✅ ' + days + ' 天前</span>'; }
+  });
+  REM_OVERDUE = overdue;
+  const sum = book.querySelector('.ov-sum');
+  if (sum) sum.innerHTML = '共 ' + DATA.clients.length + ' 家 · <span class="rem-red">⚠️ ' + overdue +
+    ' 家超 7 天未跟进</span> · 点客户名跳转画像；跟进轨迹最新日期自动同步到最近跟进与提醒';
+  const b = $('#btnRem');
+  if (b) b.innerHTML = '🔔 提醒' + (overdue ? '<span class="rem-badge">' + overdue + '</span>' : '');
+}
+function buildRemPanel() {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const list = (DATA.clients || [])
+    .map(c => ({ c: c, d: ovDays(c) }))
+    .filter(x => x.d)
+    .map(x => ({ c: x.c, days: Math.round((today - x.d) / 86400000) }))
+    .filter(x => x.days > 7)
+    .sort((a, b) => b.days - a.days);
+  const el = $('#remList');
+  if (!list.length) {
+    el.innerHTML = '<div class="rem-gray" style="padding:10px 4px">✅ 暂无超 7 天未跟进的客户</div>';
+    return;
+  }
+  el.innerHTML = list.map(x =>
+    '<div class="rem-item" data-remgoto="' + x.c.no + '">' +
+    '<span class="rn">' + esc(x.c.no) + ' ' + esc(x.c.name) + '</span>' +
+    '<span class="rc">' + esc(stripHtml(edits['ov-' + x.c.no + '-status'] || x.c.status || '').slice(0, 10)) + '</span>' +
+    '<span class="rd">' + x.days + ' 天未跟进</span></div>').join('');
+}
+$('#btnRem').onclick = () => {
+  const p = $('#remPanel');
+  if (p.classList.contains('show')) p.classList.remove('show');
+  else { buildRemPanel(); p.classList.add('show'); }
+};
+$('#remPanel').addEventListener('click', e => {
+  const it = e.target.closest('[data-remgoto]');
+  if (it) {
+    $('#remPanel').classList.remove('show');
+    const no = it.dataset.remgoto;
+    if (DATA._first && DATA._first[no] != null) goTo(DATA._first[no]);
+  }
+});
+
+/* ============ 追新面板 ============ */
+function buildNewsPanel() {
+  const el = $('#newsList');
+  const sub = $('#newsSub');
+  if (!NEWS || !NEWS.items.length) {
+    el.innerHTML = '<div class="rem-gray" style="padding:10px 4px">暂无追新数据：每日自动检索任务会更新同目录 news-data.js 后自动生效（刷新页面即可）</div>';
+    sub.textContent = '';
+    return;
+  }
+  const items = NEWS.items.slice().sort((a, b) => (a.date || '') < (b.date || '') ? 1 : -1);
+  let fresh = 0;
+  const byC = {};
+  items.forEach(n => {
+    if (newsFresh(n.date)) fresh++;
+    (byC[n.no] = byC[n.no] || []).push(n);
+  });
+  sub.textContent = '更新于 ' + (NEWS.updated || '—') + ' · 共 ' + items.length + ' 条 · 近 3 天新动态 ' + fresh +
+    ' 条 · 点客户名跳转画像页，点 🔗 溯源原文';
+  el.innerHTML = Object.keys(byC).map(no => {
+    const c = (DATA.clients || []).find(x => x.no === no);
+    return '<div class="news-cust">' +
+      '<div class="nc-head" data-newsgoto="' + esc(no) + '"><span class="rn">' + esc(no) + '　' + esc(c ? c.name : '') + '</span>' +
+      '<span class="rd">' + byC[no].length + ' 条</span></div>' +
+      byC[no].map(n => '<div class="news-row' + (newsFresh(n.date) ? ' fresh' : '') + '">' +
+        (newsFresh(n.date) ? '<span class="n-fresh">新</span>' : '') +
+        '<span class="n-date">' + esc(n.date || '') + '</span>' +
+        '<span class="n-tag" style="background:' + newsTagColor(n.tag) + '">' + esc(n.tag || '动态') + '</span>' +
+        '<span class="n-tt">' + esc(n.title || '') + '</span>' +
+        (n.url ? '<a class="n-link" href="' + esc(n.url) + '" target="_blank" rel="noopener">🔗 ' + esc(n.source || '溯源') + '</a>' : '') +
+        '</div>').join('') +
+      '</div>';
+  }).join('');
+}
+$('#btnNews').onclick = () => {
+  const p = $('#newsPanel');
+  if (p.classList.contains('show')) p.classList.remove('show');
+  else { buildNewsPanel(); p.classList.add('show'); }
+};
+$('#newsPanel').addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  const it = e.target.closest('[data-newsgoto]');
+  if (it) {
+    $('#newsPanel').classList.remove('show');
+    const no = it.dataset.newsgoto;
+    if (DATA._first && DATA._first[no] != null) goTo(DATA._first[no]);
+  }
+});
+/* 追新徽标：近 3 天新动态数 */
+(function newsBadge() {
+  if (!NEWS || !NEWS.items.length) return;
+  const fresh = NEWS.items.filter(n => newsFresh(n.date)).length;
+  if (fresh) $('#btnNews').innerHTML = '🌐 追新<span class="rem-badge">' + fresh + '</span>';
+})();
+
+/* ============ 编辑 ============ */
+function applyEdits() {
+  const keys = Object.keys(edits);
+  keys.forEach(k => {
+    const el = book.querySelector('[data-eid="' + cssEsc(k) + '"]');
+    if (el) el.innerHTML = edits[k];
+  });
+  applyStyles();
+  updateEditFlag();
+}
+/* 整块级字体格式重建后回填 */
+function applyStyles() {
+  Object.keys(styles).forEach(k => {
+    const el = book.querySelector('[data-eid="' + cssEsc(k) + '"]');
+    if (!el) return;
+    const st = styles[k] || {};
+    if (st.fs) el.style.fontSize = st.fs;
+    if (st.ff) el.style.fontFamily = st.ff;
+    if (st.color) el.style.color = st.color;
+    if (st.bg) el.style.background = st.bg;
+    if (st.bold) el.style.fontWeight = '700';
+  });
+}
+function cssEsc(s) { return String(s).replace(/(["\\])/g, '\\$1'); }
+
+function setEditable(on) {
+  book.querySelectorAll('[data-eid]').forEach(el => {
+    if (el.classList.contains('toc-name')) return;
+    if (el.classList.contains('cell') || el.classList.contains('editable-field')) { el.setAttribute('contenteditable', 'true'); return; } // 增行单元格与信息卡始终可编辑
+    if (on) el.setAttribute('contenteditable', 'true');
+    else el.removeAttribute('contenteditable');
+  });
+}
+
+function bindEditCapture() {
+  book.addEventListener('input', e => {
+    const inCell = e.target.closest && (e.target.closest('.cell') || e.target.closest('.editable-field'));
+    if (!editMode && !inCell) return;
+    const el = e.target.closest('[data-eid]');
+    if (!el) return;
+    const k = el.dataset.eid;
+    edits[k] = el.innerHTML;
+    syncPair(k);
+    const ttbl = el.closest('table[data-track]');            // 跟进轨迹表日期列（第1列）
+    if (ttbl) {
+      const ttd = el.closest('td');
+      if (ttd && ttd.cellIndex === 0) {
+        const tc = (DATA.clients || []).find(x => x.no === ttbl.dataset.track);
+        if (tc) syncTrackFor(tc);
+      }
+    }
+    clearTimeout(bindEditCapture._t);
+    bindEditCapture._t = setTimeout(() => {
+      try { localStorage.setItem(EDIT_KEY, JSON.stringify(edits)); } catch (err) {}
+      updateEditFlag();
+      updateReminders();
+      // 内容变高可能溢出，实时兜底
+      const pg = el.closest('.page');
+      if (pg && pg._body && pg._body.scrollHeight > BODY_H + 2) {
+        let k2 = parseFloat(pg._flow.style.zoom || 1);
+        pg._flow.style.zoom = Math.max(0.72, k2 - 0.03).toFixed(2);
+      }
+    }, 420);
+  }, true);
+}
+
+function updateEditFlag() {
+  const n = Object.keys(edits).length;
+  const f = $('#editFlag');
+  if (editMode) f.innerHTML = '<i></i>编辑中' + (n ? ' · 已改 ' + n : '');
+}
+
+/* ============ 字体格式工具 ============ */
+let lastFmtHost = null;
+book.addEventListener('focusin', e => {
+  if (e.target.isContentEditable) {
+    const el = e.target.closest('[data-eid]');
+    if (el) lastFmtHost = el;
+  }
+});
+/* 当前格式操作目标：优先「选中文字」，否则「光标所在块 / 最近聚焦块」 */
+function fmtTargets() {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount && !sel.isCollapsed) {
+    const r = sel.getRangeAt(0);
+    let sn = r.startContainer, en = r.endContainer;
+    if (sn.nodeType === 3) sn = sn.parentElement;
+    if (en.nodeType === 3) en = en.parentElement;
+    const h1 = sn && sn.closest ? sn.closest('[data-eid]') : null;
+    const h2 = en && en.closest ? en.closest('[data-eid]') : null;
+    if (h1 && h1 === h2) return { kind: 'sel', sel: sel, host: h1 };
+    if (h1 !== h2) return { kind: 'cross' };
+  }
+  const ae = document.activeElement;
+  let host = (ae && ae.dataset && ae.dataset.eid) ? ae
+    : (ae && ae.closest ? ae.closest('[data-eid]') : null);
+  if (!host || !host.isContentEditable) host = (lastFmtHost && lastFmtHost.isConnected) ? lastFmtHost : null;
+  return { kind: 'block', host: host };
+}
+/* 选中文字 → 包一层带内联样式的 span（随 edits 持久化） */
+function wrapSel(css) {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount || sel.isCollapsed) return false;
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  span.setAttribute('style', css);
+  try {
+    span.appendChild(range.extractContents());
+    range.insertNode(span);
+    const nr = document.createRange();
+    nr.selectNodeContents(span);
+    sel.removeAllRanges();
+    sel.addRange(nr);
+    return true;
+  } catch (err) { return false; }
+}
+function unwrapSpans(root, range) {
+  (root || book).querySelectorAll('span[style]').forEach(sp => {
+    if (sp.classList.length || sp.id) return;          // 不动 emoji 等功能 span
+    if (range && !range.intersectsNode(sp)) return;
+    const parent = sp.parentNode;
+    while (sp.firstChild) parent.insertBefore(sp.firstChild, sp);
+    parent.removeChild(sp);
+  });
+}
+/* 格式修改后：保存 edits + 同步 + 溢出兜底 */
+function recordFmt(el) {
+  if (!el || !el.dataset || !el.dataset.eid) return;
+  const k = el.dataset.eid;
+  edits[k] = el.innerHTML;
+  syncPair(k);
+  try { localStorage.setItem(EDIT_KEY, JSON.stringify(edits)); } catch (err) {}
+  updateEditFlag();
+  updateReminders();
+  const pg = el.closest('.page');
+  if (pg && pg._body && pg._body.scrollHeight > BODY_H + 2) {
+    const k2 = parseFloat(pg._flow.style.zoom || 1);
+    pg._flow.style.zoom = Math.max(0.72, k2 - 0.03).toFixed(2);
+  }
+}
+function fmtApply(props) {
+  const t = fmtTargets();
+  if (t.kind === 'cross') { toast('一次只支持在同一个文本块内设置格式'); return; }
+  if (t.kind === 'sel') {
+    const css = Object.keys(props).map(p => p + ':' + props[p]).join(';');
+    if (wrapSel(css)) { recordFmt(t.host); toast('已应用到所选文字'); }
+    else toast('应用失败，请重新选中文字');
+    return;
+  }
+  const host = t.host;
+  if (!host) { toast('请先选中文字，或把光标放进要设置的文本块'); return; }
+  Object.keys(props).forEach(p => { if (props[p]) host.style.setProperty(p, props[p]); });
+  const k = host.dataset.eid;
+  styles[k] = Object.assign({}, styles[k]);
+  if (props['font-size']) styles[k].fs = props['font-size'];
+  if (props['font-family']) styles[k].ff = props['font-family'];
+  if (props['color']) styles[k].color = props['color'];
+  if (props['background']) styles[k].bg = props['background'];
+  if (props['font-weight']) styles[k].bold = true;
+  saveStyles();
+  recordFmt(host);
+  toast('已应用到整个文本块（字号变更后页面会自动压缩防溢出）');
+}
+$('#fmtSize').onchange = e => { if (e.target.value) fmtApply({ 'font-size': e.target.value }); e.target.value = ''; };
+$('#fmtFamily').onchange = e => { if (e.target.value) fmtApply({ 'font-family': e.target.value }); e.target.value = ''; };
+$('#fmtColor').addEventListener('input', e => fmtApply({ 'color': e.target.value }));
+$('#fmtBg').addEventListener('input', e => fmtApply({ 'background': e.target.value }));
+$('#fmtBold').onclick = () => fmtApply({ 'font-weight': '700' });
+$('#fmtClear').onclick = () => {
+  const t = fmtTargets();
+  if (t.kind === 'cross') { toast('一次只支持在同一个文本块内清除格式'); return; }
+  if (t.kind === 'sel') {
+    const r = t.sel.getRangeAt(0);
+    unwrapSpans(t.host, r);
+    recordFmt(t.host);
+    toast('已清除所选文字的格式');
+    return;
+  }
+  const host = t.host;
+  if (!host) { toast('请先选中文字，或把光标放进要清除格式的文本块'); return; }
+  host.style.removeProperty('font-size');
+  host.style.removeProperty('font-family');
+  host.style.removeProperty('color');
+  host.style.removeProperty('background');
+  host.style.removeProperty('font-weight');
+  if (host.dataset.eid) { delete styles[host.dataset.eid]; saveStyles(); }
+  unwrapSpans(host, null);
+  recordFmt(host);
+  toast('已清除该文本块的自定义格式');
+};
+
+/* ============ 翻页 ============ */
+function show(i, instant) {
+  idx = Math.max(0, Math.min(PAGES.length - 1, i));
+  PAGES.forEach((pg, k) => {
+    pg.el.classList.toggle('on', k === idx);
+    if (instant) { pg.el.classList.remove('flip-out', 'flip-in'); }
+  });
+  const pgn = $('#pgn');
+  pgn.textContent = (idx + 1) + ' / ' + PAGES.length;
+  const sl = $('#slider');
+  if (sl) sl.value = idx;
+}
+
+function goTo(i) {
+  i = Math.max(0, Math.min(PAGES.length - 1, i));
+  if (i === idx || animating) return;
+  const dir = i > idx ? 1 : -1;
+  const curEl = PAGES[idx].el;
+  const nextEl = PAGES[i].el;
+
+  animating = true;
+  if (dir > 0) {
+    nextEl.classList.add('on');          // 下一页先露出来，当前页盖在上面翻走
+    curEl.classList.add('flip-out');
+  } else {
+    nextEl.classList.add('on', 'flip-in'); // 上一页从左侧翻回来盖住当前页
+  }
+
+  idx = i;
+  $('#pgn').textContent = (i + 1) + ' / ' + PAGES.length;
+  $('#slider').value = i;
+
+  setTimeout(() => {
+    curEl.classList.remove('flip-out');
+    nextEl.classList.remove('flip-in');
+    animating = false;
+    show(i, true);
+  }, 640);
+}
+
+const next = () => { if (!animating) goTo(idx + 1); };
+const prev = () => { if (!animating) goTo(idx - 1); };
+
+/* ============ 自适应缩放 ============ */
+function fit() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const k = Math.min((vw - 28) / W, (vh - 28) / H, 2.4);
+  book.style.transform = 'scale(' + Math.max(0.24, k) + ')';
+}
+window.addEventListener('resize', fit);
+
+function fillSlider() {
+  const sl = $('#slider');
+  sl.min = 0;
+  sl.max = PAGES.length - 1;
+  sl.value = idx;
+}
+
+function populateJump() {
+  const jump = $('#jump');
+  jump.innerHTML = '<option value="">跳转客户…</option>';
+  DATA.clients.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.no;
+    o.textContent = c.no + '　' + c.name;
+    jump.appendChild(o);
+  });
+}
+
+/* ============ 交互绑定 ============ */
+$('#btnNext').onclick = next;
+$('#btnPrev').onclick = prev;
+$('#slider').oninput = e => { if (!animating) show(+e.target.value, true); };
+$('#btnToc').onclick = () => goTo(0);
+$('#btnPrint').onclick = () => { toast('正在调起打印，选「另存为 PDF」即可导出'); setTimeout(() => window.print(), 400); };
+$('#btnFull').onclick = () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+};
+
+$('#btnEdit').onclick = () => {
+  editMode = !editMode;
+  document.body.classList.toggle('editing', editMode);
+  setEditable(editMode);
+  $('#btnEdit').classList.toggle('act', editMode);
+  $('#btnEdit').textContent = editMode ? '完成' : '编辑';
+  updateEditFlag();
+  if (editMode) {
+    toast('编辑已开启：点任意文字即可修改，自动保存在本机');
+    hint('改完点「完成」；点「数据 → 导出」可把改动带走');
+  } else {
+    toast('编辑已关闭，共修改 ' + Object.keys(edits).length + ' 处');
+  }
+};
+
+$('#btnReset').onclick = () => {
+  if (!Object.keys(edits).length && !Object.keys(styles).length) return toast('还没有任何修改');
+  if (!confirm('撤销全部文字修改（含字体格式）并恢复原始内容？')) return;
+  edits = {};
+  styles = {};
+  localStorage.removeItem(EDIT_KEY);
+  localStorage.removeItem(STYLE_KEY);
+  build();
+  toast('已还原为原始内容');
+};
+
+$('#btnData').onclick = () => {
+  const has = Object.keys(edits).length > 0;
+  const sel = prompt(
+    '数据操作：\n1 = 导出合订本数据（JSON，含全部文字修改）\n2 = 导入 JSON 覆盖当前内容\n3 = 仅导出文字修改' +
+    (has ? '' : '\n\n（当前没有文字修改）'), '1');
+  if (sel === '1') exportJson(true);
+  else if (sel === '2') $('#fileIn').click();
+  else if (sel === '3') exportJson(false);
+};
+
+function exportJson(full) {
+  let out;
+  if (full) {
+    const clone = JSON.parse(JSON.stringify(DATA));
+    delete clone._first; delete clone._total;
+    out = { meta: { exportedAt: new Date().toISOString(), version: 'v7-tables', edits: Object.keys(edits).length }, data: clone, edits, styles, tables: tblState };
+  } else {
+    out = { meta: { exportedAt: new Date().toISOString(), type: 'edits' }, edits, styles };
+  }
+  const blob = new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '客户画像册数据-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('已导出 JSON');
+}
+
+$('#fileIn').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const obj = JSON.parse(r.result);
+      if (obj.data && obj.data.clients) {
+        DATA.clients = obj.data.clients;
+        DATA.title = obj.data.title || DATA.title;
+        DATA.date = obj.data.date || DATA.date;
+      }
+      if (obj.edits) edits = obj.edits;
+      if (obj.styles) { styles = obj.styles; saveStyles(); }
+      if (obj.tables) { tblState = Object.assign({ rows: {}, del: {}, pages: {}, seq: 0 }, obj.tables); saveTbl(); }
+      if (obj.track) {   // 旧版轨迹数据兼容
+        Object.keys(obj.track).forEach(no => {
+          const ex = obj.track[no];
+          if (ex && ex.rows && ex.rows.length) {
+            tblState.rows['c' + no + '-track-t'] =
+              { seq: ex.seq || ex.rows.length, list: ex.rows.map(r => ({ id: r.id, cells: r.cells })) };
+          }
+        });
+        saveTbl();
+      }
+      localStorage.setItem(EDIT_KEY, JSON.stringify(edits));
+      build();
+      toast('已导入：' + DATA.clients.length + ' 家 / 修改 ' + Object.keys(edits).length + ' 处');
+    } catch (err) {
+      alert('JSON 解析失败：' + err.message);
+    }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+};
+
+// 目录下拉
+const jump = $('#jump');
+jump.onchange = () => {
+  const no = jump.value;
+  if (no && DATA._first && DATA._first[no] != null) goTo(DATA._first[no]);
+  jump.value = '';
+};
+
+// 键盘
+document.addEventListener('keydown', e => {
+  if (editMode && (e.target.isContentEditable)) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  else if (e.key === 'Home') goTo(0);
+  else if (e.key === 'End') goTo(PAGES.length - 1);
+  else if (e.key === 'Escape' && editMode) $('#btnEdit').click();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { $('#remPanel').classList.remove('show'); $('#newsPanel').classList.remove('show'); }
+});
+
+// 全表格编辑：＋行 / ×删行 / 恢复已删 / ＋空白表格页 / ⧉复制本表为新页 / 删附表页
+function lastTableOf(tid) {
+  const list = book.querySelectorAll('table[data-tid="' + cssEsc(tid) + '"]');
+  return list.length ? list[list.length - 1] : null;
+}
+function headOf(tid) {
+  const t = lastTableOf(tid);
+  if (!t) return ['项目', '内容'];
+  return Array.from(t.querySelectorAll('thead th')).map(th => th.textContent.trim());
+}
+function rowsFromDom(tid) {
+  const out = [];
+  book.querySelectorAll('table[data-tid="' + cssEsc(tid) + '"]').forEach(t => {
+    Array.from(t.tBodies[0].rows).forEach(tr => {
+      if (tr.querySelector('td.empty-hint')) return;
+      out.push(Array.from(tr.cells).map(td => {
+        const cell = td.querySelector('.cell');
+        return ((cell || td).innerText || '').replace(/×\s*$/, '').trim();
+      }));
+    });
+  });
+  return out;
+}
+function rebuildAt() {
+  const cur = idx;
+  build();
+  show(Math.min(cur, PAGES.length - 1), true);
+  setEditable(editMode);
+}
+function addExtraPage(cno, ci, tid, rows) {
+  const cat = CATS[ci] || CATS[CATS.length - 1];
+  if (!tblState.pages[cno]) tblState.pages[cno] = [];
+  const id = newXId();
+  tblState.pages[cno].push({
+    id: id, ci: ci, title: cat.name,
+    head: headOf(tid),
+    rows: rows,
+    tid: tid + '-x' + id
+  });
+  saveTbl();
+  rebuildAt();
+  toast(rows.length ? '已复制本表为新附表页（内容可继续编辑）' : '已新增空白表格页（点「＋ 行」开始填写）');
+}
+book.addEventListener('click', e => {
+  const addBtn = e.target.closest('[data-addtrow]');
+  if (addBtn) {
+    const tid = addBtn.dataset.addtrow;
+    const st = tblRowsSt(tid);
+    st.seq = (st.seq || 0) + 1;
+    st.list.push({ id: st.seq, cells: headOf(tid).map(() => '') });
+    saveTbl();
+    rebuildAt();
+    toast('已新增一行：直接点击单元格输入，本页写满自动增页');
+    return;
+  }
+  const undel = e.target.closest('[data-undel]');
+  if (undel) {
+    delete tblState.del[undel.dataset.undel];
+    saveTbl();
+    rebuildAt();
+    toast('已恢复被删除的行');
+    return;
+  }
+  const blankBtn = e.target.closest('[data-tblpage]');
+  if (blankBtn) {
+    const p = blankBtn.dataset.tblpage.split('|');
+    addExtraPage(p[0], parseInt(p[1], 10), p[2], []);
+    return;
+  }
+  const cpyBtn = e.target.closest('[data-cpypage]');
+  if (cpyBtn) {
+    const p = cpyBtn.dataset.cpypage.split('|');
+    addExtraPage(p[0], parseInt(p[1], 10), p[2], rowsFromDom(p[2]));
+    return;
+  }
+  const dx = e.target.closest('.delx');
+  if (dx) {
+    const tid = dx.dataset.delt, rk = dx.dataset.delr;
+    if (tid && rk) {
+      if (rk.charAt(0) === 'a') {
+        const st = tblState.rows[tid];
+        if (st) {
+          const i = st.list.findIndex(r => String(r.id) === rk.slice(1));
+          if (i >= 0) st.list.splice(i, 1);
+        }
+      } else {
+        const dl = tblDel(tid);
+        if (dl.indexOf(rk) < 0) dl.push(rk);
+      }
+      saveTbl();
+      rebuildAt();
+      toast('已删除该行（原始行可点「↺ 恢复已删行」找回）');
+    }
+    return;
+  }
+  const dp = e.target.closest('[data-delpage]');
+  if (dp) {
+    const p = dp.dataset.delpage.split('|');
+    if (!confirm('删除此附表页及其全部内容？')) return;
+    tblState.pages[p[0]] = (tblState.pages[p[0]] || []).filter(x => x.id !== p[1]);
+    saveTbl();
+    rebuildAt();
+    toast('已删除附表页');
+  }
+});
+
+// 点击左右翻页
+$('#stage').addEventListener('click', e => {
+  if (e.target.closest('[data-goto]') || e.target.closest('#bar') ||
+      e.target.closest('.delx') || e.target.closest('.pgdel') ||
+      e.target.closest('.track-tools') || e.target.closest('.editable-field')) return;
+  if (editMode) return;
+  const r = book.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width;
+  if (x > 0.72) next();
+  else if (x < 0.28) prev();
+});
+
+// 滑动
+let tsx = 0, tsy = 0;
+$('#stage').addEventListener('touchstart', e => {
+  tsx = e.touches[0].clientX; tsy = e.touches[0].clientY;
+}, { passive: true });
+$('#stage').addEventListener('touchend', e => {
+  if (editMode) return;
+  const dx = e.changedTouches[0].clientX - tsx;
+  const dy = e.changedTouches[0].clientY - tsy;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+}, { passive: true });
+
+/* ============ 提示 ============ */
+let hintT;
+function hint(msg, ms) {
+  const h = $('#hint');
+  h.textContent = msg;
+  h.classList.add('show');
+  clearTimeout(hintT);
+  hintT = setTimeout(() => h.classList.remove('show'), ms || 3200);
+}
+let toastT;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ============ 工具条自动隐藏（全屏沉浸阅读） ============ */
+let barT;
+function wakeBar() {
+  document.body.classList.remove('barhide');
+  clearTimeout(barT);
+  barT = setTimeout(() => {
+    if (!editMode && !$('#bar').matches(':hover')) document.body.classList.add('barhide');
+  }, 3000);
+}
+['mousemove','mousedown','keydown','touchstart','wheel'].forEach(ev =>
+  window.addEventListener(ev, wakeBar, { passive: true }));
+
+/* ============ 启动 ============ */
+bindEditCapture();
+wakeBar();
+build();
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => { build(); });
+}
+setTimeout(() => hint('点页面右侧翻页，或按 → 键；总览表里点客户名可直接跳转画像', 4600), 900);
+setTimeout(() => {
+  if (REM_OVERDUE > 0) toast('🔔 有 ' + REM_OVERDUE + ' 家客户超 7 天未跟进，点工具条「🔔 提醒」查看清单');
+}, 1800);
+
+/* 调试 / 预览：?p=12 直接打开该页；?debug=1 输出体检结果 */
+(function () {
+  const q = new URLSearchParams(location.search);
+  const p = parseInt(q.get('p') || '0', 10);
+  if (p > 0) setTimeout(() => show(Math.min(p - 1, PAGES.length - 1), true), 60);
+  if (q.get('debug') === '1') {
+    setTimeout(() => {
+      const over = [];
+      PAGES.forEach((pg, i) => {
+        if (!pg.el._flow) return;
+        const el = pg.el;
+        el.style.display = 'block'; el.style.visibility = 'hidden';
+        const h = el._flow.scrollHeight, w = el._flow.scrollWidth;
+        el.style.display = ''; el.style.visibility = '';
+        const zk = parseFloat(el._flow.style.zoom || '1');
+        if (h * zk > BODY_H + 2) over.push({ p: i + 1, h: Math.round(h * zk), k: el._flow.style.zoom || 1 });
+        if (w * zk > CONTENT_W + 2) over.push({ p: i + 1, w: Math.round(w * zk), kind: 'wide' });
+      });
+      const empty = [];
+      PAGES.forEach((pg, i) => {
+        if (pg.el._body && pg.el._flow.childElementCount === 0) empty.push(i + 1);
+      });
+      const tocMissing = [...book.querySelectorAll('[data-pg]')].filter(e => e.textContent === '—').length;
+      const out = {
+        pages: PAGES.length,
+        clients: DATA.clients.length,
+        firstPageSample: Object.entries(DATA._first).slice(0, 5),
+        lastClientPage: DATA._first[DATA.clients[DATA.clients.length - 1].no] + 1,
+        overflow: over.slice(0, 12),
+        overflowCount: over.length,
+        emptyPages: empty,
+        tocMissing,
+        scale: book.style.transform
+      };
+      const d = document.createElement('pre');
+      d.id = 'selftest';
+      d.style.cssText = 'position:fixed;left:0;top:0;z-index:9999;font-size:10px;background:#fff;padding:4px;display:none';
+      d.textContent = JSON.stringify(out);
+      document.body.appendChild(d);
+    }, 400);
+  }
+})();
+
+// 打印前展开全部页面
+window.addEventListener('beforeprint', () => {
+  PAGES.forEach(p => p.el.classList.add('on'));
+});
+window.addEventListener('afterprint', () => show(idx, true));
+</script>
+</body>
+</html>
